@@ -26,7 +26,10 @@ import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
 fun DashboardScreen(onNavigateToExerciseList: () -> Unit) { // receives the action here
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

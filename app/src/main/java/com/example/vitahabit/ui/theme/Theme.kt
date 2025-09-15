@@ -15,13 +15,15 @@ private val LightColorScheme = lightColorScheme(
     primary = VitaHabitOrange,
     onPrimary = VitaHabitWhite,
     secondary = VitaHabitLightGrey,
+    onSecondary = VitaHabitWhite,
+    tertiary = VitaHabitYellow,
+    onTertiary = VitaHabitWhite,
     background = VitaHabitDarkGray,
     surface = VitaHabitMediumGray,
     onBackground = VitaHabitGrayWhite,
     onSurface = VitaHabitGrayWhite
 )
 
-// You can define a separate DarkColorScheme later if you wish
 private val DarkColorScheme = LightColorScheme
 
 @Composable

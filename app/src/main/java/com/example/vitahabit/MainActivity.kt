@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    // The startDestination is now correctly set to the LOGIN screen
+    // The startDestination is set to the LOGIN screen
     NavHost(navController = navController, startDestination = AppRoutes.LOGIN) {
         composable(AppRoutes.LOGIN) {
             LoginScreen(

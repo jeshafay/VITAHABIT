@@ -26,7 +26,10 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
     val firstExercise = exercises.firstOrNull()
     val remainingExercises = exercises.drop(1)
 
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
         Column {
 
             TextButton(
