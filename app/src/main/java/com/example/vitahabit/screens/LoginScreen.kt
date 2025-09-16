@@ -1,5 +1,7 @@
 package com.example.vitahabit.ui.screens.login
 
+import androidx.compose.foundation.Image
+import com.example.vitahabit.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
@@ -24,12 +29,18 @@ import com.example.vitahabit.ui.theme.VitaHabitTheme
 //    }
 //}
 
+
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit) { // receives the action here
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+
+        Image(
+            painter = painterResource(R.drawable.wallpaper),
+            contentDescription = "a"
+        )
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
