@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +83,8 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                 TextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("Username", fontSize = 12.sp) },
+                    label = { Text("Email", fontSize = 12.sp) },
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp), // Increased bottom padding
@@ -98,6 +101,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password", fontSize = 12.sp) },
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp), // Increased bottom padding
@@ -114,12 +118,12 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     Text(
                         text = "Username atau password salah",
                         color = Color.Red,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 7.dp)
                     )
                 }
                 Button(
                     onClick = {
-                        if (username == "hidup jokowi" && password == "TIF123") {
+                        if (username == "hidupjokowi" && password == "TIF123") {
                             onLoginClick()
                         } else {
                             showError = true
