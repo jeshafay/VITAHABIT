@@ -1,12 +1,14 @@
 // in ExerciseListScreen.kt
-package com.example.vitahabit.ui.screens.exerciselist
+package com.example.vitahabit.screens
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +23,10 @@ import com.example.vitahabit.model.ExercisesRepository
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
-fun ExerciseListScreen(onCloseClick: () -> Unit) {
+fun ExerciseListScreen(
+    onCloseClick: () -> Unit,
+    onExerciseClick: (Exercise) -> Unit
+) {
     val exercises = ExercisesRepository.exercises
     val firstExercise = exercises.firstOrNull()
     val remainingExercises = exercises.drop(1)
@@ -31,26 +36,34 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column {
-
-            TextButton(
-                onClick = onCloseClick,
-                modifier = Modifier.padding(top = 32.dp, start = 16.dp),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Close")
+                TextButton(
+                    onClick = onCloseClick,
+                    modifier = Modifier.padding(top = 32.dp, start = 16.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
+                    Text("Close")
+                }
+                TextButton(
+                    onClick = { },
+                    modifier = Modifier.padding(top = 32.dp, end = 0.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
+                    Text("Customize")
+                }
             }
-//            Text(
-//                text = "Close",
-//                style = MaterialTheme.typography.bodyLarge,
-//                modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)
-//            )
 
-            Divider(
-                color = MaterialTheme.colorScheme.outline,
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp),
                 thickness = 2.dp,
-                modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp)
+                color = MaterialTheme.colorScheme.outline
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -70,7 +83,10 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
 
             if (firstExercise != null) {
                 Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp)) {
-                    ExerciseItem(exercise = firstExercise)
+                    ExerciseItem(
+                        exercise = firstExercise,
+                        onExerciseClick = onExerciseClick
+                    )
                 }
             }
 
@@ -80,29 +96,39 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
                 modifier = Modifier.padding(top = 8.dp, start = 14.dp)
             )
 
-            ExerciseList(exercises = remainingExercises)
+            ExerciseList(
+                exercises = remainingExercises,
+                onExerciseClick = onExerciseClick
+            )
         }
     }
 }
 
 @Composable
-fun ExerciseList(exercises: List<Exercise>, modifier: Modifier = Modifier) {
+fun ExerciseList(
+    exercises: List<Exercise>,
+    onExerciseClick: (Exercise) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(exercises) { exercise ->
-            ExerciseItem(exercise = exercise)
+            ExerciseItem(
+                exercise = exercise,
+                onExerciseClick = onExerciseClick
+            )
         }
     }
 }
 
 @Composable
-fun ExerciseItem(exercise: Exercise, modifier: Modifier = Modifier) {
+fun ExerciseItem(exercise: Exercise, onExerciseClick: (Exercise) -> Unit, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        // Use the theme's surface color for cards
+        modifier = modifier.fillMaxWidth()
+            .clickable { onExerciseClick(exercise) },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
         ),
@@ -142,6 +168,6 @@ fun ExerciseItem(exercise: Exercise, modifier: Modifier = Modifier) {
 @Composable
 fun ScreenPreview() {
     VitaHabitTheme {
-        ExerciseListScreen(onCloseClick = {})
+        ExerciseListScreen(onCloseClick = {}, onExerciseClick = {})
     }
 }

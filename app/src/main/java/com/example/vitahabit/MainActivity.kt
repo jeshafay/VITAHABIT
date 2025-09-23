@@ -13,8 +13,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 // Add the correct imports for your screens
 import com.example.vitahabit.ui.screens.dashboard.DashboardScreen
-import com.example.vitahabit.ui.screens.exerciselist.ExerciseListScreen
-import com.example.vitahabit.screens.LoginScreen
+import com.example.vitahabit.screens.ExerciseListScreen
+import com.example.vitahabit.screens.TrackerScreen
+import com.example.vitahabit.ui.screens.login.LoginScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,8 +57,16 @@ fun AppNavigation() {
         composable(AppRoutes.EXERCISE_LIST) {
             ExerciseListScreen(
                 onCloseClick = {
-                    navController.popBackStack()
+                    navController.navigate(AppRoutes.DASHBOARD)
+                },
+                onExerciseClick = { exercise ->
+                    navController.navigate(AppRoutes.REPS_TRACKER)
                 }
+            )
+        }
+        composable(AppRoutes.REPS_TRACKER) {
+            TrackerScreen(
+                onCloseClick = { navController.navigate(AppRoutes.EXERCISE_LIST) }
             )
         }
     }
