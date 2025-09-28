@@ -1,5 +1,6 @@
 package com.example.vitahabit.screens.exerciselist
 
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,15 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vitahabit.ViewModelFactory
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
 fun ExerciseListScreen(
-    viewModel: ExerciseListViewModel = viewModel(), // Get the ViewModel
+    viewModel: ExerciseListViewModel = viewModel(
+        factory = ViewModelFactory(LocalContext.current.applicationContext as Application)
+    ), // Get the ViewModel
     onCloseClick: () -> Unit,
     onExerciseClick: (ExerciseUiModel) -> Unit
 ) {

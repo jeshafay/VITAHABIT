@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-// Note: It now inherits from AndroidViewModel to easily get the application context.
 class ExerciseListViewModel(
     application: Application,
     private val exercisesRepository: ExercisesRepository // It takes the real repository
 ) : AndroidViewModel(application) {
 
     val exercises: StateFlow<List<ExerciseUiModel>> =
-        exercisesRepository.getAllExercises() // This now works correctly
+        exercisesRepository.getAllExercises()
             .map { entityList ->
                 entityList.map { entity ->
                     // The lookup happens safely in the ViewModel
