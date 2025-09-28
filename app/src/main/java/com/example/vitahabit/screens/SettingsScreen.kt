@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
@@ -22,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,21 +42,21 @@ fun SettingsScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Column (
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(16.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(vertical = 16.dp)
         ) {
             Text(
                 text = "Settings",
-//                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(top = 16.dp)
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 8.dp)
             )
 
             HorizontalDivider(
-                modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp),
+                modifier = Modifier.padding(vertical = 0.dp, horizontal = 0.dp),
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.outline
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             // Each row in the settings menu is a clickable item
 //            SettingsItem(text = "My Profile", icon = painterResource(R.drawable.icon_profile), onClick = onProfileClick)
             SettingsItem(text = "My Profile", icon = Icons.Outlined.Person, onClick = onProfileClick)
@@ -75,14 +75,16 @@ fun SettingsScreen(
 fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .padding(start = 28.dp, end = 28.dp),
 //        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = icon,
@@ -93,7 +95,8 @@ fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
             Text(
                 text,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.bodyLarge)
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

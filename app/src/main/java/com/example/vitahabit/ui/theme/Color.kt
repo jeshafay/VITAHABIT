@@ -9,5 +9,6 @@ val VitaHabitLightGrey = Color(0xFF989898)
 val VitaHabitGrey = Color(0xFF6A6A6A)
 val VitaHabitMediumGray = Color(0xFF363636)
 val VitaHabitDarkGray = Color(0xFF212121) // background
-val VitaHabitGrayWhite = Color(0xFFD9D9D9) // text
+val VitaHabitGrayWhite = Color(0xFF989898) // text
+//val VitaHabitGrayWhite = Color(0xFF989898) // old
 val VitaHabitWhite = Color(0xFFFFFFFF) // text

@@ -44,6 +44,7 @@ fun VitaHabitTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = Typography,
         // You can add your Typography.kt and Shapes.kt back here later
         content = content
     )
