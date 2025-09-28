@@ -1,6 +1,6 @@
 // Exercise Class
 
-package com.example.vitahabit.model
+package com.example.vitahabit.data.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
