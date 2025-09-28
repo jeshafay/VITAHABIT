@@ -3,22 +3,30 @@ package com.example.vitahabit
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-// Add the correct imports for your screens
-import com.example.vitahabit.ui.screens.dashboard.DashboardScreen
 import com.example.vitahabit.screens.ExerciseListScreen
+import com.example.vitahabit.screens.LoginScreen
+import com.example.vitahabit.screens.MainScreen
 import com.example.vitahabit.screens.TrackerScreen
-import com.example.vitahabit.ui.screens.login.LoginScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -27,7 +35,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation()
+                    val startState by viewModel.startState.collectAsState()
+                    AppNavigation(startState = startState)
                 }
             }
         }
@@ -35,39 +44,53 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(startState: AppStartState) {
     val navController = rememberNavController()
 
-    // The startDestination is set to the LOGIN screen
-    NavHost(navController = navController, startDestination = AppRoutes.LOGIN) {
-        composable(AppRoutes.LOGIN) {
-            LoginScreen(
-                onLoginClick = {
-                    navController.navigate(AppRoutes.DASHBOARD)
-                }
-            )
+    val startDestination = when (startState) {
+        is AppStartState.LoggedIn -> AppRoutes.MAIN_APP
+        is AppStartState.LoggedOut -> AppRoutes.LOGIN
+        is AppStartState.Loading -> "loading"
+    }
+
+    if (startState is AppStartState.Loading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
-        composable(AppRoutes.DASHBOARD) {
-            DashboardScreen(
-                onNavigateToExerciseList = {
-                    navController.navigate(AppRoutes.EXERCISE_LIST)
-                }
-            )
-        }
-        composable(AppRoutes.EXERCISE_LIST) {
-            ExerciseListScreen(
-                onCloseClick = {
-                    navController.navigate(AppRoutes.DASHBOARD)
-                },
-                onExerciseClick = { exercise ->
-                    navController.navigate(AppRoutes.REPS_TRACKER)
-                }
-            )
-        }
-        composable(AppRoutes.REPS_TRACKER) {
-            TrackerScreen(
-                onCloseClick = { navController.navigate(AppRoutes.EXERCISE_LIST) }
-            )
+    } else {
+        NavHost(
+            navController = navController,
+            startDestination = startDestination
+        ) {
+            composable(AppRoutes.LOGIN) {
+                LoginScreen(
+                    onLoginClick = {
+                        navController.navigate(AppRoutes.MAIN_APP) {
+                            popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(AppRoutes.MAIN_APP) {
+                MainScreen(
+                    onNavigateToExerciseList = { navController.navigate(AppRoutes.EXERCISE_LIST) }
+                )
+            }
+            composable(AppRoutes.EXERCISE_LIST) {
+                ExerciseListScreen(
+                    onCloseClick = {
+                        navController.popBackStack(AppRoutes.MAIN_APP, inclusive = false)
+                    },
+                    onExerciseClick = {
+                        navController.navigate(AppRoutes.REPS_TRACKER)
+                    }
+                )
+            }
+            composable(AppRoutes.REPS_TRACKER) {
+                TrackerScreen(
+                    onCloseClick = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
