@@ -15,9 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.ui.screens.dashboard.DashboardScreen
 import com.example.vitahabit.screens.ExerciseListScreen
 import com.example.vitahabit.screens.TrackerScreen
-import com.example.vitahabit.screens.LoginScreen
+import com.example.vitahabit.ui.screens.login.LoginScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

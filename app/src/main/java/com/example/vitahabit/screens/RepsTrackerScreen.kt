@@ -15,10 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.vitahabit.model.Exercise
-import com.example.vitahabit.model.ExercisesRepository
-import com.example.vitahabit.model.ExercisesRepository.exercises
-import com.example.vitahabit.screens.ExerciseListScreen
+import com.example.vitahabit.data.model.Exercise
+import com.example.vitahabit.data.model.ExercisesRepository.exercises
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
@@ -27,7 +25,7 @@ fun TrackerScreen(
 ) {
 
     // get the first exercise. The UI will handle the case where the list is empty.
-    val currentExercise = ExercisesRepository.exercises.firstOrNull()
+    val currentExercise = exercises.firstOrNull()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -105,10 +103,12 @@ fun TrackerScreen(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 0.dp),
                         thickness = 1.dp
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
 
                 // Pass the non-null exercise to the RepList

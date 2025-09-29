@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -75,14 +76,16 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             ) {
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)) {
+                    .padding(bottom = 20.dp)
+                ) {
                     TextField(
                         value = username,
                         onValueChange = { username = it },
                         label = { Text("Email", fontFamily = Inter, fontWeight = FontWeight.Medium, fontSize = 22.sp, color = Color.White.copy(alpha = 0.50f)) },
                         textStyle = TextStyle(fontFamily = Inter, color = Color.White.copy(alpha = 0.50f), fontSize = 22.sp, fontWeight = FontWeight.Medium),
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 0  .dp),
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Color.White,
                             focusedContainerColor = Color.Transparent,
@@ -101,7 +104,13 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                             )
                         }
                     )
-                    Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+//                    Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 50.dp, end = 32.dp),
+                        thickness = 2.5.dp,
+                        color = Color.White.copy(alpha = 0.50f)
+                    )
                 }
 
                 Column(modifier = Modifier
@@ -134,7 +143,13 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                             )
                         }
                     )
-                    Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+//                  Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 50.dp, end = 32.dp),
+                        thickness = 2.5.dp,
+                        color = Color.White.copy(alpha = 0.50f)
+                    )
                 }
 
                 if (showError) {

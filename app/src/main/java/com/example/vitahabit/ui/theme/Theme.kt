@@ -14,13 +14,14 @@ import androidx.core.view.WindowCompat
 private val LightColorScheme = lightColorScheme(
     primary = VitaHabitOrange,
     onPrimary = VitaHabitWhite,
-    secondary = VitaHabitLightGrey,
+    secondary = VitaHabitGrey,
     onSecondary = VitaHabitWhite,
     tertiary = VitaHabitYellow,
     onTertiary = VitaHabitWhite,
     background = VitaHabitDarkGray,
     surface = VitaHabitMediumGray,
     onBackground = VitaHabitGrayWhite,
+    onPrimaryContainer = VitaHabitLightGrey,
     onSurface = VitaHabitGrayWhite
 )
 
@@ -43,6 +44,7 @@ fun VitaHabitTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = Typography,
         // You can add your Typography.kt and Shapes.kt back here later
         content = content
     )

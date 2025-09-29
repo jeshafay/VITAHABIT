@@ -1,4 +1,4 @@
-package com.example.vitahabit.model
+package com.example.vitahabit.data.model
 import com.example.vitahabit.R
 
 object ExercisesRepository {
