@@ -5,7 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -93,7 +98,7 @@ fun ProgressScreen(
                 Text(
                     text = "Progress",
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 14.dp)
                 )
                 HorizontalDivider(
                     thickness = 2.dp,
@@ -112,7 +117,15 @@ fun ProgressScreen(
             item {
                 AchievementsCard(onNavigateToAchievements = onNavigateToAchievements)
             }
-            item { BeforeAndAfterCard() }
+            item {
+                BeforeAndAfterCard(
+                    // In the functional app, this data will come from the uiState
+                    beforeDate = "Jan 1, 2024",
+                    beforeWeight = "80.0 kg",
+                    afterDate = "Sep 29, 2025",
+                    afterWeight = "75.0 kg"
+                )
+            }
             item {
                 MeasurementsCard(
                     weight = uiState.weight,
@@ -176,7 +189,7 @@ fun AchievementsCard(onNavigateToAchievements: () -> Unit) {
                     onClick = onNavigateToAchievements,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text("More")
+                    Text("More", color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         }
@@ -184,7 +197,12 @@ fun AchievementsCard(onNavigateToAchievements: () -> Unit) {
 }
 
 @Composable
-fun BeforeAndAfterCard() {
+fun BeforeAndAfterCard(
+    beforeDate: String,
+    beforeWeight: String,
+    afterDate: String,
+    afterWeight: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,16 +213,36 @@ fun BeforeAndAfterCard() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
                 "Before and After",
                 style = MaterialTheme.typography.titleMedium,
             )
-            // TODO: Add placeholder images or an upload button here
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                PhotoPlaceholder(label = "Before", date = beforeDate, weight = beforeWeight)
+                PhotoPlaceholder(label = "After", date = afterDate, weight = afterWeight)
+            }
+
+            OutlinedButton(onClick = { /* TODO: Launch image picker from gallery */ }) {
+                Icon(
+                    imageVector = Icons.Default.AddAPhoto,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                Text("Update Photos", color = MaterialTheme.colorScheme.tertiary)
+            }
         }
     }
 }
+
 
 @Composable
 fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
@@ -236,7 +274,7 @@ fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
             ) {
                 Text(
                     text = weight,
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.displayMedium
                 )
                 Text(
                     text = "kg",
@@ -245,10 +283,10 @@ fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
                 )
             }
             Text(
-                "WEIGHT",
+                text = "WEIGHT",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 8.dp)
+                fontSize = 10.sp,
+                modifier = Modifier.padding(top = 2.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
             Row(
@@ -360,6 +398,34 @@ fun SelectableChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
             color = textColor,
             style = MaterialTheme.typography.bodySmall
         )
+    }
+}
+
+@Composable
+fun PhotoPlaceholder(label: String, date: String, weight: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // This Box is a placeholder for the user's uploaded image
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Person,
+                contentDescription = label,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        Text(text = date, style = MaterialTheme.typography.bodySmall)
+        Text(text = weight, style = MaterialTheme.typography.bodySmall)
     }
 }
 

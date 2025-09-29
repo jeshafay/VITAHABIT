@@ -1,4 +1,4 @@
-package com.example.vitahabit.ui.screens.dashboard
+package com.example.vitahabit.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

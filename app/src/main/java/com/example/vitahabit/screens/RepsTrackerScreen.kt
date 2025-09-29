@@ -103,10 +103,12 @@ fun TrackerScreen(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 0.dp),
                         thickness = 1.dp
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
 
                 // Pass the non-null exercise to the RepList
