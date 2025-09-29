@@ -1,14 +1,16 @@
 package com.example.vitahabit.screens
 
 import androidx.compose.foundation.Image
-import com.example.vitahabit.R
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,21 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.vitahabit.R
+import com.example.vitahabit.ui.theme.Inter
 import com.example.vitahabit.ui.theme.VitaHabitTheme
-
-//@Composable
-//fun LoginScreen() {
-//    Box(
-//        modifier = Modifier.fillMaxSize(),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Text("Login Screen")
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,16 +51,13 @@ fun LoginScreen(onLoginClick: () -> Unit) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        // Consider how these images should be layered or positioned.
-        // Box is often useful for layering.
-        Box(modifier = Modifier.fillMaxSize()) { // Use Box for layering if needed
+        Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(R.drawable.wallpaper_2),
                 contentDescription = "Background wallpaper image for the login screen",
-                modifier = Modifier.fillMaxSize(), // Example: Make wallpaper fill the screen
-                contentScale = ContentScale.Crop // Often used with fillMaxSize for images
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
-            // Rectangle at the bottom
             Image(
                 painter = painterResource(R.drawable.rectangle_1),
                 contentDescription = "Decorative rectangle element",
@@ -75,48 +68,78 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             )
             Column(
                 modifier = Modifier
-                    .fillMaxSize() // Make column take full space to center its content
-                    .padding(horizontal = 16.dp), // Add some padding around the content
-                verticalArrangement = Arrangement.Bottom, // Align content to the bottom
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Email", fontSize = 12.sp) },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp), // Increased bottom padding
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)) {
+                    TextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Email", fontFamily = Inter, fontWeight = FontWeight.Medium, fontSize = 22.sp, color = Color.White.copy(alpha = 0.50f)) },
+                        textStyle = TextStyle(fontFamily = Inter, color = Color.White.copy(alpha = 0.50f), fontSize = 22.sp, fontWeight = FontWeight.Medium),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(R.drawable.email_line),
+                                contentDescription = "Email Icon",
+                                modifier = Modifier.height(5.dp).width(0.1.dp).padding(end = 8.dp),
+                                contentScale = ContentScale.FillBounds
+                            )
+                        }
                     )
-                )
-                TextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password", fontSize = 12.sp) },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp), // Increased bottom padding
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent, // Make TextField background transparent
-                        unfocusedContainerColor = Color.Transparent, // Make TextField background transparent when unfocused
-                        disabledContainerColor = Color.Transparent, // Make TextField background transparent when disabled
-                        focusedIndicatorColor = Color.Transparent, // Optional: Hide indicator when focused
-                        unfocusedIndicatorColor = Color.Transparent, // Optional: Hide indicator when unfocused
-                        disabledIndicatorColor = Color.Transparent // Optional: Hide indicator when disabled
+                    Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+                }
+
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 82.dp)) {
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password", fontFamily = Inter, fontWeight = FontWeight.Medium, fontSize = 22.sp, color = Color.White.copy(alpha = 0.50f)) },
+                        textStyle = TextStyle(fontFamily = Inter, color = Color.White.copy(alpha = 0.50f), fontSize = 22.sp),
+                        visualTransformation = PasswordVisualTransformation(),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
+                        ,
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(R.drawable.email_line),
+                                contentDescription = "Password Icon",
+                                modifier = Modifier.height(5.dp).width(5.dp).padding(end = 8.dp),
+                                contentScale = ContentScale.FillBounds
+                            )
+                        }
                     )
-                )
+                    Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color.White.copy(alpha = 0.50f)))
+                }
+
                 if (showError) {
                     Text(
-                        text = "Username atau password salah",
+                        text = "Email atau password salah",
                         color = Color.Red,
                         modifier = Modifier.padding(bottom = 7.dp)
                     )
@@ -130,16 +153,54 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         }
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 80.dp) // Adjust this padding to move the button further down
+                        .align(Alignment.End)
+                        .padding(bottom = 80.dp)
+                        .height(32.dp)
+                        .width(130.dp)
+
+
                 ) {
-                    Text("Log In")
+                    Text("")
                 }
+            }
+            // Box for the "Next" button with background image
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 80.dp, end = 16.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rectangle_under_start),
+                        contentDescription = "Next button background",
+                        modifier = Modifier
+                            .size(width = 130.dp, height = 32.dp), // Fixed size for the button background
+                        contentScale = ContentScale.FillBounds
+                    )
+                    Text(
+                        text = "Next",
+                        color = Color.Black,
+                        fontFamily = Inter,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(end = 40.dp) // Menggeser teks "Next" ke kiri
+                    )
+                }
+                // Iconify arrow
+                Image(
+                    painter = painterResource(id = R.drawable.iconify_arrow),
+                    contentDescription = "Next arrow",
+                    modifier = Modifier
+                        .padding(bottom = 3.dp, end = 16.dp)
+                        .size(24.dp) // Sesuaikan ukuran ikon jika perlu
+                        .align(Alignment.BottomEnd), // Pastikan ikon berada di kanan dalam Box
+                    contentScale = ContentScale.Fit
+                )
             }
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
