@@ -199,7 +199,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         fontFamily = Inter,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(end = 40.dp) // Menggeser teks "Next" ke kiri
+                        modifier = Modifier.padding(end = 40.dp)
                     )
                 }
                 // Iconify arrow
@@ -208,8 +208,8 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     contentDescription = "Next arrow",
                     modifier = Modifier
                         .padding(bottom = 3.dp, end = 16.dp)
-                        .size(24.dp) // Sesuaikan ukuran ikon jika perlu
-                        .align(Alignment.BottomEnd), // Pastikan ikon berada di kanan dalam Box
+                        .size(24.dp)
+                        .align(Alignment.BottomEnd),
                     contentScale = ContentScale.Fit
                 )
             }
