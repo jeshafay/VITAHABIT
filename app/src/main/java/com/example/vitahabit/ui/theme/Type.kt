@@ -17,9 +17,13 @@ val Montserrat = FontFamily(
     Font(R.font.montserrat_regular, FontWeight.Normal),
 )
 
+val PaytoneOne = FontFamily(
+    Font(R.font.paytone_one_regular, FontWeight.Normal),
+)
+
 val Typography = Typography( // MAIN APP TITLE
     headlineLarge = TextStyle(
-        fontFamily = Montserrat,
+        fontFamily = PaytoneOne,
         fontWeight = FontWeight.Normal,
         fontSize = 48.sp
     ),
