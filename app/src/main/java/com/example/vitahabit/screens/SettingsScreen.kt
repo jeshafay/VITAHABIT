@@ -82,7 +82,7 @@ private fun SettingsMenuScreen(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 8.dp)
             )
-            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             Spacer(modifier = Modifier.height(12.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

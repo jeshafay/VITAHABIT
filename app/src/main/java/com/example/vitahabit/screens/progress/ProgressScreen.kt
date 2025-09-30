@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import com.example.vitahabit.R
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -100,6 +101,11 @@ class ProgressViewModel : ViewModel() {
                 MeasurementData("SHLDRS", 127.0f, shouldersColor),
                 MeasurementData("THIGH", 68.5f, thighColor),
                 MeasurementData("CALF", 53.0f, calfColor)
+            ),
+            achievements = listOf(
+                AchievementUiModel("First Milestone", "10 workouts in a month", R.drawable.ic_launcher_foreground, true),
+                AchievementUiModel("Rising Star", "10 workouts in a month", R.drawable.ic_launcher_foreground, true),
+                AchievementUiModel("Power Month", "10 workouts in a month", R.drawable.ic_launcher_foreground, false),
             )
         )
     }
@@ -130,10 +136,10 @@ fun ProgressScreen(
                     modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 14.dp)
                 )
                 HorizontalDivider(
-                    thickness = 2.dp,
+                    thickness = 1.dp,
                     color = MaterialTheme.colorScheme.outline
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
             item {
@@ -223,14 +229,18 @@ fun AchievementsCard(
                     onClick = onNavigateToAchievements,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text("More")
+                    Text("More", color = MaterialTheme.colorScheme.onBackground)
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            // A Row to display the first 3 achievement icons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
+                // Ensure we only take the first 3 items to prevent layout issues
                 achievements.take(3).forEach { achievement ->
                     AchievementIcon(achievement = achievement)
                 }

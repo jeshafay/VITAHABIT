@@ -38,15 +38,16 @@ fun VitaHabitTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = Color.Transparent.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            window.statusBarColor = Color.Black.toArgb()
+
+            // The corrected line: status bar icons should be light
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        // You can add your Typography.kt and Shapes.kt back here later
         content = content
     )
 }
