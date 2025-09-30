@@ -113,7 +113,7 @@ fun DashboardScreen(onNavigateToExerciseList: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             // 🔹 Bottom Navigation
-            BottomNavigationBar()
+//            BottomNavigationBar()
         }
     }
 }

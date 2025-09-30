@@ -2,7 +2,10 @@ package com.example.vitahabit.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
+import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -13,9 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.outlined.LibraryBooks
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -24,7 +28,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.AppRoutes
 import com.example.vitahabit.screens.progress.ProgressScreen
-import com.example.vitahabit.screens.DashboardScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
@@ -43,6 +46,7 @@ fun MainScreen(
 
                 val items = listOf(
                     BottomNavItem.Dashboard,
+                    BottomNavItem.Library,
                     BottomNavItem.Progress,
                     BottomNavItem.Settings
                 )
@@ -62,11 +66,14 @@ fun MainScreen(
                             }
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                            selectedIconColor = MaterialTheme.colorScheme.tertiary,
+                            selectedTextColor = MaterialTheme.colorScheme.tertiary,
+
                             unselectedIconColor = MaterialTheme.colorScheme.onSurface,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurface,
-                            indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+
+                            // remove background/box
+                            indicatorColor = Color.Transparent
                         )
                     )
                 }
@@ -81,6 +88,10 @@ fun MainScreen(
             composable(AppRoutes.DASHBOARD) {
                 DashboardScreen(onNavigateToExerciseList = onNavigateToExerciseList)
             }
+            composable(AppRoutes.LIBRARY) {
+                LibraryScreen()
+            }
+
             composable(AppRoutes.PROGRESS) {
                 ProgressScreen(onNavigateToAchievements = onNavigateToAchievements)
             }
@@ -99,13 +110,18 @@ sealed class BottomNavItem(
 ) {
     object Dashboard : BottomNavItem(
         route = AppRoutes.DASHBOARD,
-        title = "Dashboard",
-        icon = Icons.Outlined.Settings
+        title = "Workout",
+        icon = Icons.Outlined.FitnessCenter
+    )
+    object Library : BottomNavItem(
+        route = AppRoutes.LIBRARY,
+        title = "Library",
+        icon = Icons.Outlined.LibraryBooks
     )
     object Progress : BottomNavItem(
         route = AppRoutes.PROGRESS,
         title = "Progress",
-        icon = Icons.Outlined.Settings
+        icon = Icons.Outlined.Watch
     )
     object Settings : BottomNavItem(
         route = AppRoutes.SETTINGS,

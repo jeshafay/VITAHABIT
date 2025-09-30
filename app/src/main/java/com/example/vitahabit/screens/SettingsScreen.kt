@@ -1,7 +1,10 @@
 package com.example.vitahabit.screens
 
 import android.widget.Space
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.List
@@ -11,7 +14,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -19,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
-// --- 1. Define Routes for Internal Navigation ---
 private object SettingsRoutes {
     const val MENU = "settings_menu"
     const val PROFILE = "settings_profile"
@@ -30,7 +34,6 @@ private object SettingsRoutes {
     const val DISPLAY = "settings_display"
 }
 
-// --- 2. Main Entry Point for Settings Navigation ---
 @Composable
 fun SettingsScreen(
     onProfileClick: () -> Unit,
@@ -58,7 +61,6 @@ fun SettingsScreen(
     }
 }
 
-// --- 3. The Main Settings Menu UI ---
 @Composable
 private fun SettingsMenuScreen(
     onProfileClick: () -> Unit,
@@ -100,13 +102,54 @@ private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "MY PROFILE", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Edit Name", options = listOf("Option 1", "Option 2"))
-            Spacer(modifier = Modifier.height(4.dp))
-            ChoiceSettingItem(label = "Change Password", options = listOf("Yes", "No"))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Profile Picture Placeholder
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Person,
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier.size(72.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "Joel Nathan", style = MaterialTheme.typography.headlineSmall)
+                Spacer(modifier = Modifier.height(4.dp))
+                TextButton(onClick = { /* TODO: Handle photo editing */ }) {
+                    Text("Edit Photo", color = MaterialTheme.colorScheme.primary)
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        ProfileDetailRow(label = "Gender", value = "Male")
+                        ProfileDetailRow(label = "Age", value = "30")
+                        ProfileDetailRow(label = "Weight", value = "75.0 kg")
+                        ProfileDetailRow(label = "Height", value = "175.0 cm")
+                    }
+                }
+            }
         }
     }
 }
@@ -116,13 +159,18 @@ private fun UnitsSettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "UNIT OF MEASUREMENTS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Weight Unit", options = listOf("kg", "lbs"))
-            HorizontalDivider()
-            ChoiceSettingItem(label = "Distance Unit", options = listOf("km", "miles"))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RadioButtonSettingItem(label = "Weight Unit", options = listOf("kg", "lbs"))
+                RadioButtonSettingItem(label = "Distance Unit", options = listOf("km", "miles"))
+            }
+
         }
     }
 }
@@ -132,11 +180,16 @@ private fun SmartFeaturesSettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "SMART WEIGHT & REPS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Auto-Increment Weight", options = listOf("On", "Off"))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RadioButtonSettingItem(label = "Auto-Increment Weight", options = listOf("On", "Off"))
+                }
         }
     }
 }
@@ -146,13 +199,25 @@ private fun SoundSettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "SOUNDS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Sound Before Step", options = listOf("5 sec", "0 sec", "off"), initialSelection = 1)
-            HorizontalDivider()
-            ChoiceSettingItem(label = "Vibration Before Step", options = listOf("5 sec", "0 sec", "off"), initialSelection = 1)
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RadioButtonSettingItem(
+                    label = "Sound Before Step",
+                    options = listOf("5 sec", "0 sec", "off"),
+                    initialSelection = 1
+                )
+                RadioButtonSettingItem(
+                    label = "Vibration Before Step",
+                    options = listOf("5 sec", "0 sec", "off"),
+                    initialSelection = 1
+                )
+            }
         }
     }
 }
@@ -162,11 +227,19 @@ private fun RemindersSettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "REMINDERS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Workout Reminders", options = listOf("Daily", "Weekly", "Off"))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RadioButtonSettingItem(
+                    label = "Workout Reminders",
+                    options = listOf("Daily", "Weekly", "Off")
+                )
+            }
         }
     }
 }
@@ -176,44 +249,93 @@ private fun DisplaySettingsPage(onNavigateBack: () -> Unit) {
     SettingsPageScaffold(title = "WORKOUT TAB DISPLAY", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ChoiceSettingItem(label = "Default View", options = listOf("List", "Grid"))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RadioButtonSettingItem(label = "Default View", options = listOf("List", "Grid"))
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChoiceSettingItem(label: String, options: List<String>, initialSelection: Int = 0) {
-    var selectedIndex by remember { mutableStateOf(initialSelection) }
+private fun RadioButtonSettingItem(label: String, options: List<String>, initialSelection: Int = 0) {
+    var selectedOption by remember { mutableStateOf(options[initialSelection]) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = label, modifier = Modifier.weight(1f))
-            SingleChoiceSegmentedButtonRow {
-                options.forEachIndexed { index, optionLabel ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                        onClick = { selectedIndex = index },
-                        selected = index == selectedIndex
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                options.forEach { optionText ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        // Make the whole column clickable to select the radio button
+                        modifier = Modifier.selectable(
+                            selected = (optionText == selectedOption),
+                            onClick = { selectedOption = optionText },
+                            role = Role.RadioButton
+                        )
                     ) {
-                        Text(optionLabel)
+                        RadioButton(
+                            selected = (optionText == selectedOption),
+                            onClick = null, // onClick is handled by the parent modifier
+                            colors = RadioButtonDefaults.colors(
+                                // This makes the selected radio button use your primary (orange) color
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                        Text(text = optionText, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
         }
     }
 }
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun ChoiceSettingItem(label: String, options: List<String>, initialSelection: Int = 0) {
+//    var selectedIndex by remember { mutableStateOf(initialSelection) }
+//
+//    Card(
+//        modifier = Modifier.fillMaxWidth(),
+//        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+//    ) {
+//        Row(
+//            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(text = label, modifier = Modifier.weight(1f))
+//            SingleChoiceSegmentedButtonRow {
+//                options.forEachIndexed { index, optionLabel ->
+//                    SegmentedButton(
+//                        shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+//                        onClick = { selectedIndex = index },
+//                        selected = index == selectedIndex
+//                    ) {
+//                        Text(optionLabel)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -224,8 +346,8 @@ private fun SettingsPageScaffold(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = title) }, // Removed style for default TopAppBar styling
+            CenterAlignedTopAppBar(
+                title = { Text(text = title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -250,7 +372,7 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -267,6 +389,21 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodyLarge
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileDetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 

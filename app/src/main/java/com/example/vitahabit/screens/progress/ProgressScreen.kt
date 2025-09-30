@@ -1,20 +1,48 @@
 package com.example.vitahabit.screens.progress
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -36,7 +64,8 @@ data class ProgressUiState(
     val workoutCount: String = "0",
     val totalHours: String = "0.0",
     val totalVolume: String = "0",
-    val measurements: List<MeasurementData> = emptyList()
+    val measurements: List<MeasurementData> = emptyList(),
+    val achievements: List<AchievementUiModel> = emptyList()
 )
 
 class ProgressViewModel : ViewModel() {
@@ -115,7 +144,10 @@ fun ProgressScreen(
                 )
             }
             item {
-                AchievementsCard(onNavigateToAchievements = onNavigateToAchievements)
+                AchievementsCard(
+                    achievements = uiState.achievements,
+                    onNavigateToAchievements = onNavigateToAchievements
+                )
             }
             item {
                 BeforeAndAfterCard(
@@ -143,7 +175,7 @@ fun StatisticsCard(workoutCount: String, totalHours: String, totalVolume: String
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -165,11 +197,14 @@ fun StatisticsCard(workoutCount: String, totalHours: String, totalVolume: String
 }
 
 @Composable
-fun AchievementsCard(onNavigateToAchievements: () -> Unit) {
+fun AchievementsCard(
+    achievements: List<AchievementUiModel>,
+    onNavigateToAchievements: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -185,11 +220,19 @@ fun AchievementsCard(onNavigateToAchievements: () -> Unit) {
                     modifier = Modifier.align(Alignment.Center)
                 )
                 TextButton(
-                    // Connect the "More" button's onClick to the action
                     onClick = onNavigateToAchievements,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text("More", color = MaterialTheme.colorScheme.onBackground)
+                    Text("More")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                achievements.take(3).forEach { achievement ->
+                    AchievementIcon(achievement = achievement)
                 }
             }
         }
@@ -206,7 +249,7 @@ fun BeforeAndAfterCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal =16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -251,7 +294,7 @@ fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -426,6 +469,30 @@ fun PhotoPlaceholder(label: String, date: String, weight: String, modifier: Modi
         Text(text = label, style = MaterialTheme.typography.titleMedium)
         Text(text = date, style = MaterialTheme.typography.bodySmall)
         Text(text = weight, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+fun AchievementIcon(achievement: AchievementUiModel) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.alpha(if (achievement.isUnlocked) 1f else 0.4f)
+    ) {
+        Image(
+            painter = painterResource(id = achievement.iconResId),
+            contentDescription = achievement.name,
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(8.dp)
+        )
+        Text(
+            text = achievement.name,
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

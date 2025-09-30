@@ -9,6 +9,7 @@ object AppRoutes {
     const val DASHBOARD = "dashboard"
     const val SETTINGS = "settings"
     const val PROGRESS = "progress"
+    const val LIBRARY = "library"
 
     // Routes for full-screen destinations (root navigator)
     const val EXERCISE_LIST = "exercise_list"
