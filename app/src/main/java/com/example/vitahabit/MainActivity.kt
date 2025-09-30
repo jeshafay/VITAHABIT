@@ -19,9 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.vitahabit.screens.*
+import com.example.vitahabit.screens.DashboardScreen
 import com.example.vitahabit.screens.exerciselist.ExerciseListScreen
 import com.example.vitahabit.screens.progress.AchievementsScreen
+import com.example.vitahabit.screens.TrackerScreen
+import com.example.vitahabit.screens.LoginScreen
+import com.example.vitahabit.screens.*
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 class MainActivity : ComponentActivity() {
