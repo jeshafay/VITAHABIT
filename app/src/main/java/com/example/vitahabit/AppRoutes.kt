@@ -2,6 +2,7 @@ package com.example.vitahabit
 
 object AppRoutes {
     // Routes for the root navigator in MainActivity
+    const val START_LOGIN = "start_login"
     const val LOGIN = "login"
     const val MAIN_APP = "main_app" // This hosts the screens with the bottom bar
 

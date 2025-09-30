@@ -45,9 +45,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(startState: AppStartState) {
     val navController = rememberNavController()
+
+    // --- 🎯 CHANGE #1: Update the start destination for logged out users ---
     val startDestination = when (startState) {
         is AppStartState.LoggedIn -> AppRoutes.MAIN_APP
-        is AppStartState.LoggedOut -> AppRoutes.LOGIN
+        is AppStartState.LoggedOut -> AppRoutes.START_LOGIN // Changed from LOGIN
         is AppStartState.Loading -> "loading"
     }
 
@@ -59,15 +61,24 @@ fun AppNavigation(startState: AppStartState) {
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            // Set all animations to None (null) for instant transitions
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
+
+            composable(AppRoutes.START_LOGIN) {
+                StartLoginScreen(
+                    onLoginClick = {
+
+                        navController.navigate(AppRoutes.LOGIN)
+                    }
+                )
+            }
+
             composable(AppRoutes.LOGIN) {
                 LoginScreen(
                     onLoginClick = {
                         navController.navigate(AppRoutes.MAIN_APP) {
-                            popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                            popUpTo(AppRoutes.START_LOGIN) { inclusive = true }
                         }
                     }
                 )
@@ -80,7 +91,7 @@ fun AppNavigation(startState: AppStartState) {
             }
             composable(AppRoutes.EXERCISE_LIST) {
                 ExerciseListScreen(
-                    onCloseClick = { navController.popBackStack() }, // Using popBackStack is correct here
+                    onCloseClick = { navController.popBackStack() },
                     onExerciseClick = { navController.navigate(AppRoutes.REPS_TRACKER) }
                 )
             }
