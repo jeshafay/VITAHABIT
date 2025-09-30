@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,16 +68,45 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     .fillMaxWidth(),
                 contentScale = ContentScale.FillWidth
             )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 62.dp, start = 26.dp)
+            ) {
+                Text(
+                    text = "Login",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 22.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "Sign Up",
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 22.sp,
+                    color = Color.White
+                )
+            }
+            Image(
+                painter = painterResource(id = R.drawable.iconify_profile_picture),
+                contentDescription = "Profile picture",
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 50.dp, end = 26.dp)
+                    .size(40.dp),
+                contentScale = ContentScale.Crop
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = if (showError) 70.dp else 70.dp), // Adjusted padding to keep fields static
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)
                 ) {
                     TextField(
                         value = username,
@@ -85,7 +115,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         textStyle = TextStyle(fontFamily = Inter, color = Color.White.copy(alpha = 0.50f), fontSize = 22.sp, fontWeight = FontWeight.Medium),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
-                            .padding(start = 0  .dp),
+                            .padding(start = 0.dp),
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Color.White,
                             focusedContainerColor = Color.Transparent,
@@ -111,11 +141,13 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         thickness = 2.5.dp,
                         color = Color.White.copy(alpha = 0.50f)
                     )
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
 
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 82.dp)) {
+                    // .padding(bottom = 82.dp) // Removed to keep password field in place
+                ) {
                     TextField(
                         value = password,
                         onValueChange = { password = it },
@@ -138,7 +170,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                             Image(
                                 painter = painterResource(R.drawable.email_line),
                                 contentDescription = "Password Icon",
-                                modifier = Modifier.height(5.dp).width(5.dp).padding(end = 8.dp),
+                                modifier = Modifier.height(4.dp).width(0.1.dp).padding(end = 8.dp),
                                 contentScale = ContentScale.FillBounds
                             )
                         }
@@ -150,39 +182,39 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         thickness = 2.5.dp,
                         color = Color.White.copy(alpha = 0.50f)
                     )
+                    Spacer(modifier = Modifier.height(if (showError) 10.dp else 52.dp)) // Adjust spacing based on error
                 }
 
                 if (showError) {
                     Text(
                         text = "Email atau password salah",
                         color = Color.Red,
-                        modifier = Modifier.padding(bottom = 7.dp)
+                        modifier = Modifier.padding(bottom = 12.dp, end = 100.dp), // Removed bottom padding to keep button position static
+                        fontSize = 13.sp
                     )
                 }
-                Button(
-                    onClick = {
-                        if (username == "hidupjokowi" && password == "TIF123") {
-                            onLoginClick()
-                        } else {
-                            showError = true
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(bottom = 80.dp)
-                        .height(32.dp)
-                        .width(130.dp)
-
-
-                ) {
-                    Text("")
-                }
+                Spacer(modifier = Modifier.height(60.dp)) // Added Spacer to push content above the button
             }
-            // Box for the "Next" button with background image
+            Button(
+                onClick = {
+                    if (username == "hidupjokowi" && password == "TIF123") {
+                        onLoginClick()
+                    } else {
+                        showError = true
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd) // Align to bottom end of the parent Box
+                    .padding(end = 46.dp, bottom = 45.dp) // Adjust padding as needed
+                    .height(32.dp)
+                    .width(130.dp)
+            ) {
+                Text("")
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 80.dp, end = 16.dp),
+                    .padding(bottom = 45.dp, end = 46.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -190,7 +222,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         painter = painterResource(id = R.drawable.rectangle_under_start),
                         contentDescription = "Next button background",
                         modifier = Modifier
-                            .size(width = 130.dp, height = 32.dp), // Fixed size for the button background
+                            .size(width = 130.dp, height = 32.dp),
                         contentScale = ContentScale.FillBounds
                     )
                     Text(
@@ -202,7 +234,6 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                         modifier = Modifier.padding(end = 40.dp)
                     )
                 }
-                // Iconify arrow
                 Image(
                     painter = painterResource(id = R.drawable.iconify_arrow),
                     contentDescription = "Next arrow",
@@ -213,6 +244,56 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     contentScale = ContentScale.Fit
                 )
             }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 67.dp, bottom = 90.dp)
+            ){
+                Box(contentAlignment = Alignment.Center){
+                    Image(
+                        painter = painterResource(id = R.drawable.eclipes_apple_logo),
+                        contentDescription = "eclipse apple logo",
+                        modifier = Modifier
+                            .size(36.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.apple_logo),
+                        contentDescription = "apple logo",
+                        modifier = Modifier
+                            .size(20.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Box(contentAlignment = Alignment.Center){
+                    Image(
+                        painter = painterResource(id = R.drawable.eclipes_apple_logo),
+                        contentDescription = "eclipse google logo",
+                        modifier = Modifier
+                            .size(36.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.google_logo),
+                        contentDescription = "google logo",
+                        modifier = Modifier
+                            .size(20.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+            }
+            Text(
+                text = "Forgot Password?",
+                fontFamily = Inter,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                color = Color.Black.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 40.dp, bottom = 144.dp) // Adjust padding as needed
+            )
         }
     }
 }
