@@ -12,10 +12,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 // Add the correct imports for your screens
-import com.example.vitahabit.ui.screens.dashboard.DashboardScreen
-import com.example.vitahabit.screens.ExerciseListScreen
+import com.example.vitahabit.screens.DashboardScreen
+import  com.example.vitahabit.screens.exerciselist.ExerciseListScreen
 import com.example.vitahabit.screens.TrackerScreen
-import com.example.vitahabit.ui.screens.login.LoginScreen
+import com.example.vitahabit.screens.LoginScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 class MainActivity : ComponentActivity() {

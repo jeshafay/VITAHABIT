@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
@@ -66,7 +67,7 @@ fun SettingsScreen(
             SettingsItem(text = "Smart Weight & Reps", icon = Icons.Outlined.Person, onClick = {  })
             SettingsItem(text = "Sound", icon = Icons.Outlined.Person, onClick = {  })
             SettingsItem(text = "Reminders", icon = Icons.Outlined.Notifications, onClick = onNotificationsClick)
-            SettingsItem(text = "Workout Tab Display", icon = Icons.Outlined.List, onClick = {  })
+            SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = {  })
         }
     }
 }
