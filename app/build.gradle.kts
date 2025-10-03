@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,6 +45,16 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.ui)
+    implementation(libs.androidx.foundation)
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    implementation("androidx.compose.material:material-icons-extended")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -53,9 +64,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("androidx.navigation:navigation-compose:2.8.0-beta-06")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+//    implementation("androidx.navigation:navigation-compose:2.8.0-beta-06")
+    //    implementation("androidx.navigation:navigation-fragment-ktx:2.8.0")
+    //    implementation("androidx.navigation:navigation-ui-ktx:2.8.0")
 
     // ✅ tambahin ini buat desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")

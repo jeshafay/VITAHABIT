@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
@@ -14,13 +15,14 @@ import androidx.core.view.WindowCompat
 private val LightColorScheme = lightColorScheme(
     primary = VitaHabitOrange,
     onPrimary = VitaHabitWhite,
-    secondary = VitaHabitLightGrey,
+    secondary = VitaHabitGrey,
     onSecondary = VitaHabitWhite,
     tertiary = VitaHabitYellow,
     onTertiary = VitaHabitWhite,
     background = VitaHabitDarkGray,
     surface = VitaHabitMediumGray,
     onBackground = VitaHabitGrayWhite,
+    onPrimaryContainer = VitaHabitLightGrey,
     onSurface = VitaHabitGrayWhite
 )
 
@@ -36,14 +38,16 @@ fun VitaHabitTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = Color.Black.toArgb()
+
+            // The corrected line: status bar icons should be light
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        // You can add your Typography.kt and Shapes.kt back here later
+        typography = Typography,
         content = content
     )
 }
