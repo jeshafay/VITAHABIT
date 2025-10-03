@@ -79,46 +79,58 @@ fun LibraryScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // --- Header Item ---
-            item {
-                Text(
-                    text = "Library",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
-                )
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+        Column {
+            LibraryTopBar()
 
-            // --- Filter Chips Section ---
-            item {
-                FilterChipsSection()
-            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 2.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // --- Filter Chips Section ---
+                item {
+                    FilterChipsSection()
+                }
 
-            // --- "My Saved Routines" Section ---
-            item {
-                SavedRoutinesSection(routines = uiState.savedRoutines)
-            }
+                // --- "My Saved Routines" Section ---
+                item {
+                    SavedRoutinesSection(routines = uiState.savedRoutines)
+                }
 
-            // --- "Exercise Encyclopedia" Section ---
-            item {
-                Text(
-                    text = "Exercise Encyclopedia",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
+                // --- "Exercise Encyclopedia" Section ---
+                item {
+                    Text(
+                        text = "Exercise Encyclopedia",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
 
-            item {
-                ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+                item {
+                    ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+                }
             }
         }
+    }
+}
+
+@Composable
+fun LibraryTopBar() {
+    Spacer(modifier = Modifier.height(18.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Library",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
     }
 }
 

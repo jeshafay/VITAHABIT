@@ -33,7 +33,7 @@ class MainViewModel : ViewModel() {
             // }
 
             // Default to logged out for now
-            _startState.value = AppStartState.LoggedOut
+            _startState.value = AppStartState.LoggedIn
         }
     }
 }

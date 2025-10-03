@@ -1,6 +1,8 @@
 package com.example.vitahabit.screens
 
 import android.widget.Space
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -41,7 +44,12 @@ fun SettingsScreen(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = SettingsRoutes.MENU) {
+    NavHost(
+        navController = navController,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        startDestination = SettingsRoutes.MENU)
+    {
         composable(SettingsRoutes.MENU) {
             SettingsMenuScreen(
                 onProfileClick = { navController.navigate(SettingsRoutes.PROFILE) },
@@ -77,13 +85,8 @@ private fun SettingsMenuScreen(
         Column(
             modifier = Modifier.padding(vertical = 16.dp)
         ) {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 8.dp)
-            )
-            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
-            Spacer(modifier = Modifier.height(12.dp))
+            SettingsTopBar()
+            Spacer(modifier = Modifier.height(10.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 SettingsItem(text = "My Profile", icon = Icons.Outlined.Person, onClick = onProfileClick)
@@ -345,26 +348,47 @@ private fun SettingsPageScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = title) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = title) },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    )
                 )
-            )
-        },
+            },
         content = content
     )
 }
+
+@Composable
+fun SettingsTopBar() {
+    Spacer(modifier = Modifier.height(2.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+    }
+}
+
 
 @Composable
 private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
@@ -376,7 +400,7 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -386,7 +410,7 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
             )
             Text(
                 text,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }

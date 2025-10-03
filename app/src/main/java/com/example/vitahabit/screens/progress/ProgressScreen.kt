@@ -124,53 +124,64 @@ fun ProgressScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            item {
-                Text(
-                    text = "Progress",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 14.dp)
-                )
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-            }
+        Column(modifier = Modifier.fillMaxSize()) {
+            ProgressTopBar()
 
-            item {
-                StatisticsCard(
-                    workoutCount = uiState.workoutCount,
-                    totalHours = uiState.totalHours,
-                    totalVolume = uiState.totalVolume
-                )
-            }
-            item {
-                AchievementsCard(
-                    achievements = uiState.achievements,
-                    onNavigateToAchievements = onNavigateToAchievements
-                )
-            }
-            item {
-                BeforeAndAfterCard(
-                    // In the functional app, this data will come from the uiState
-                    beforeDate = "Jan 1, 2024",
-                    beforeWeight = "80.0 kg",
-                    afterDate = "Sep 29, 2025",
-                    afterWeight = "75.0 kg"
-                )
-            }
-            item {
-                MeasurementsCard(
-                    weight = uiState.weight,
-                    measurements = uiState.measurements
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                item {
+                    StatisticsCard(
+                        workoutCount = uiState.workoutCount,
+                        totalHours = uiState.totalHours,
+                        totalVolume = uiState.totalVolume
+                    )
+                }
+                item {
+                    AchievementsCard(
+                        achievements = uiState.achievements,
+                        onNavigateToAchievements = onNavigateToAchievements
+                    )
+                }
+                item {
+                    BeforeAndAfterCard(
+                        // In the functional app, this data will come from the uiState
+                        beforeDate = "Jan 1, 2024",
+                        beforeWeight = "80.0 kg",
+                        afterDate = "Sep 29, 2025",
+                        afterWeight = "75.0 kg"
+                    )
+                }
+                item {
+                    MeasurementsCard(
+                        weight = uiState.weight,
+                        measurements = uiState.measurements
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun ProgressTopBar() {
+    Spacer(modifier = Modifier.height(18.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Progress",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
     }
 }
 
@@ -259,7 +270,7 @@ fun BeforeAndAfterCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal =16.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(

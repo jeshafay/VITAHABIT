@@ -62,7 +62,7 @@ fun AppNavigation(startState: AppStartState) {
             navController = navController,
             startDestination = startDestination,
             enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
+            exitTransition = { ExitTransition.None },
         ) {
 
             composable(AppRoutes.START_LOGIN) {

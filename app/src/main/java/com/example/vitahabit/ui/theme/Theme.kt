@@ -13,11 +13,11 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = VitaHabitOrange,
+    primary = VitaHabitYellow,
     onPrimary = VitaHabitWhite,
     secondary = VitaHabitGrey,
     onSecondary = VitaHabitWhite,
-    tertiary = VitaHabitYellow,
+    tertiary = VitaHabitOrange,
     onTertiary = VitaHabitWhite,
     background = VitaHabitDarkGray,
     surface = VitaHabitMediumGray,

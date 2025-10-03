@@ -1,5 +1,7 @@
 package com.example.vitahabit.screens
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
@@ -83,6 +85,8 @@ fun MainScreen(
         NavHost(
             navController = nestedNavController,
             startDestination = AppRoutes.DASHBOARD,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppRoutes.DASHBOARD) {
