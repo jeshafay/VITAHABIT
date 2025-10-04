@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -92,7 +93,7 @@ class ProgressViewModel : ViewModel() {
             weight = "75.0",
             workoutCount = "12",
             totalHours = "8.5",
-            totalVolume = "1.2k",
+            totalVolume = "32.9k",
             measurements = listOf(
                 MeasurementData("BICEPS", 47.0f, bicepsColor),
                 MeasurementData("ABS", 85.0f, absColor),
@@ -181,7 +182,7 @@ fun ProgressTopBar() {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
     }
 }
 
@@ -227,24 +228,31 @@ fun AchievementsCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Achievements",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-                TextButton(
-                    onClick = onNavigateToAchievements,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Text("More", color = MaterialTheme.colorScheme.onBackground)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "ACHIEVEMENTS",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    TextButton(
+                        onClick = onNavigateToAchievements,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Text("More", color = MaterialTheme.colorScheme.onBackground)
+                    }
                 }
+                Text(
+                    text = "Start training and achieve your goals",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 10.sp,
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             // A Row to display the first 3 achievement icons
             Row(
@@ -281,7 +289,7 @@ fun BeforeAndAfterCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                "Before and After",
+                "BEFORE AND AFTER",
                 style = MaterialTheme.typography.titleMedium,
             )
 
@@ -410,13 +418,15 @@ fun StatItem(title: String, value: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 26.sp,
+//            fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = title,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
     }
@@ -470,7 +480,7 @@ fun PhotoPlaceholder(label: String, date: String, weight: String, modifier: Modi
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         // This Box is a placeholder for the user's uploaded image
         Box(
@@ -484,10 +494,10 @@ fun PhotoPlaceholder(label: String, date: String, weight: String, modifier: Modi
                 imageVector = Icons.Outlined.Person,
                 contentDescription = label,
                 modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(vertical = 4.dp))
         Text(text = date, style = MaterialTheme.typography.bodySmall)
         Text(text = weight, style = MaterialTheme.typography.bodySmall)
     }

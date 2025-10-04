@@ -130,7 +130,7 @@ fun LibraryTopBar() {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
     }
 }
 

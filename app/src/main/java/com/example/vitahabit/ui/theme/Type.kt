@@ -82,7 +82,7 @@ val Typography = Typography( // MAIN APP TITLE
     bodySmall = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 12.sp,
+        fontSize = 13.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.5.sp
     ),

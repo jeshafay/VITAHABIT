@@ -23,7 +23,9 @@ private val LightColorScheme = lightColorScheme(
     surface = VitaHabitMediumGray,
     onBackground = VitaHabitGrayWhite,
     onPrimaryContainer = VitaHabitLightGrey,
-    onSurface = VitaHabitGrayWhite
+    onSurface = VitaHabitGrayWhite,
+    surfaceVariant = VitaHabitLightGrey2,
+    outline = VitaHabitTopBarDivider,
 )
 
 private val DarkColorScheme = LightColorScheme

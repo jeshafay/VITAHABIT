@@ -111,7 +111,8 @@ fun DashboardScreen(onNavigateToExerciseList: () -> Unit) {
             ) {
                 Text(
                     text = "START WORKOUT",
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
@@ -136,7 +137,8 @@ fun TopBar() {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+        //HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
     }
 }
 
