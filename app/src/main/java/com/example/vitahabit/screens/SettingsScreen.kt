@@ -1,8 +1,6 @@
 package com.example.vitahabit.screens
 
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.exclude
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
@@ -13,7 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,8 +28,12 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.SquareFoot
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -136,11 +140,11 @@ private fun SettingsMenuScreen(
             Spacer(modifier = Modifier.height(14.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                SettingsItem(text = "My Profile", icon = Icons.Outlined.Person, onClick = onProfileClick)
-                SettingsItem(text = "Unit of measurements", icon = Icons.Outlined.Person, onClick = onUnitsClick)
-                SettingsItem(text = "Smart Weight & Reps", icon = Icons.Outlined.Person, onClick = onSmartFeaturesClick)
-                SettingsItem(text = "Sound", icon = Icons.Outlined.Person, onClick = onSoundClick)
-                SettingsItem(text = "Reminders", icon = Icons.Outlined.Notifications, onClick = onRemindersClick)
+                SettingsItem(text = "My Profile", icon = Icons.Filled.Person, onClick = onProfileClick)
+                SettingsItem(text = "Unit of measurements", icon = Icons.Default.SquareFoot, onClick = onUnitsClick)
+                SettingsItem(text = "Smart Weight & Reps", icon = Icons.Default.Lightbulb, onClick = onSmartFeaturesClick)
+                SettingsItem(text = "Sound", icon = Icons.Default.VolumeUp, onClick = onSoundClick)
+                SettingsItem(text = "Reminders", icon = Icons.Default.Notifications, onClick = onRemindersClick)
 //                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = onDisplayClick)
             }
         }
@@ -172,10 +176,10 @@ private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Person,
+                        imageVector = Icons.Outlined.AccountCircle,
                         contentDescription = "Profile Picture",
                         modifier = Modifier.size(72.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.background
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))

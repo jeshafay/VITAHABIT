@@ -105,9 +105,29 @@ fun LibraryScreen(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
-
-                item {
-                    ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+                val videoRows = uiState.exerciseVideos.chunked(2)
+//                item {
+//                    ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+//                }
+                items(videoRows) { rowItems ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Add each video card to the row
+                        rowItems.forEach { video ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                VideoThumbnailCard(video = video)
+                            }
+                        }
+                        // If there's an odd number of items, add a spacer to the last row
+                        // to prevent the single item from stretching.
+                        if (rowItems.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
@@ -193,23 +213,6 @@ private fun SavedRoutinesSection(routines: List<SavedRoutine>) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun ExerciseEncyclopediaSection(videos: List<ExerciseVideo>) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .height(900.dp)
-            .padding(horizontal = 16.dp),
-        userScrollEnabled = false,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(videos) { video ->
-            VideoThumbnailCard(video = video)
         }
     }
 }
