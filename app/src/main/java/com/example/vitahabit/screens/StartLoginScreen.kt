@@ -52,10 +52,18 @@ fun StartLoginScreen(onLoginClick: () -> Unit) {
                 contentDescription = "Barbell Icon",
                 modifier = Modifier.align(Alignment.Center).padding(bottom = 72.dp).size(200.dp)
             )
+
             Text(
                 text = "VITAHABIT",
-                style = MaterialTheme.typography.headlineLarge, color = Color.White,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    letterSpacing = 6.sp
+                ), color = Color.White,
                 modifier = Modifier.align(Alignment.Center).padding(bottom = 280.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.line_under_quote),
+                contentDescription = "Line under quote",
+                modifier = Modifier.align(Alignment.Center).padding(bottom = 120.dp, top = 570.dp).size(width = 300.dp, height = 50.dp)
             )
             Column(
                 modifier = Modifier
