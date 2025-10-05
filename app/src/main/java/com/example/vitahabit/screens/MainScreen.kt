@@ -103,7 +103,7 @@ fun MainScreen(
                 ProgressScreen(onNavigateToAchievements = onNavigateToAchievements)
             }
             composable(AppRoutes.SETTINGS) {
-                SettingsScreen(onProfileClick = {}, onNotificationsClick = {})
+                SettingsScreen()
             }
         }
     }

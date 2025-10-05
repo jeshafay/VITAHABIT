@@ -88,7 +88,7 @@ fun TrackerScreen(
                     )
                     Column {
                         Text(
-                            text = "-- kg",
+                            text = "70 kg",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -166,7 +166,7 @@ fun RepListItem(setNumber: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiary
+            containerColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Row(
@@ -176,7 +176,7 @@ fun RepListItem(setNumber: Int) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = "-- kg",
+                text = "70 kg",
                 color = MaterialTheme.colorScheme.background,
                 modifier = Modifier.padding(16.dp)
             )
@@ -186,7 +186,7 @@ fun RepListItem(setNumber: Int) {
                 color = MaterialTheme.colorScheme.background
             )
             Text(
-                text = "-- reps",
+                text = "10 reps",
                 color = MaterialTheme.colorScheme.background,
                 modifier = Modifier.padding(16.dp)
             )

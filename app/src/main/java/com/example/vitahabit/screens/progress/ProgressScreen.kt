@@ -193,7 +193,8 @@ fun ProgressTopBar() {
         ) {
             Text(
                 text = "Progress",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
