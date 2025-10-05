@@ -1,28 +1,74 @@
 package com.example.vitahabit.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vitahabit.R
-import androidx.compose.ui.text.font.FontFamily
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
-// TODO: Replace with actual Inter font family if added to resources
-val Inter = FontFamily.Default
+val Inter = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semi_bold, FontWeight.SemiBold),
+    Font(R.font.inter_bold, FontWeight.Bold)
+)
 
 @Composable
-fun WallpaperWithButton(resourceId: Int, description: String) {
+fun QuestionnaireScreen(
+    onQuestionnaireComplete: () -> Unit
+) {
+    var currentQuestionIndex by remember { mutableIntStateOf(0) }
+
+    val wallpapers = remember {
+        listOf(
+            R.drawable.w1_gender, R.drawable.w2_age, R.drawable.w3_weight,
+            R.drawable.w4_height, R.drawable.w5_main_exercising_reason, R.drawable.w6_type_of_workout,
+            R.drawable.w7_motivation, R.drawable.w8_reminders, R.drawable.w9_time_management,
+            R.drawable.w10_solo_or_group, R.drawable.w11_time_of_day, R.drawable.w12_check_in
+        )
+    }
+
+    WallpaperWithButton(
+        resourceId = wallpapers[currentQuestionIndex],
+        description = "Latar belakang kuesioner ${currentQuestionIndex + 1}",
+        onNextClick = {
+            if (currentQuestionIndex < wallpapers.size - 1) {
+                currentQuestionIndex++
+            } else {
+                onQuestionnaireComplete()
+            }
+        }
+    )
+}
+
+@Composable
+fun WallpaperWithButton(
+    resourceId: Int,
+    description: String,
+    onNextClick: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = resourceId),
@@ -33,61 +79,49 @@ fun WallpaperWithButton(resourceId: Int, description: String) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 37.dp, end = 38.dp),
+                .padding(bottom = 32.dp, end = 30.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.clickable(onClick = onNextClick)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.rectangle_under_start),
-                    contentDescription = "Next button background",
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 32.dp),
+                    contentDescription = "Latar belakang tombol Next",
+                    modifier = Modifier.size(width = 130.dp, height = 32.dp),
                     contentScale = ContentScale.FillBounds
                 )
-                Text(
-                    text = "Next",
-                    color = Color.Black,
-                    fontFamily = Inter,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(end = 40.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.size(width = 130.dp, height = 32.dp)
+                ) {
+                    Text(
+                        text = "Next",
+                        color = Color.Black,
+                        fontFamily = Inter,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.iconify_arrow),
+                        contentDescription = "Panah Next",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(24.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
-            Image(
-                painter = painterResource(id = R.drawable.iconify_arrow),
-                contentDescription = "Next arrow",
-                modifier = Modifier
-                    .padding(bottom = 3.dp, end = 16.dp)
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd),
-                contentScale = ContentScale.Fit
-            )
         }
     }
 }
 
-@Composable fun Wallpaper1() = WallpaperWithButton(R.drawable.w1_gender, "Wallpaper 1")
-@Composable fun Wallpaper2() = WallpaperWithButton(R.drawable.w2_age, "Wallpaper 2")
-@Composable fun Wallpaper3() = WallpaperWithButton(R.drawable.w3_weight, "Wallpaper 3")
-@Composable fun Wallpaper4() = WallpaperWithButton(R.drawable.w4_height, "Wallpaper 4")
-@Composable fun Wallpaper5() = WallpaperWithButton(R.drawable.w5_main_exercising_reason, "Wallpaper 5")
-@Composable fun Wallpaper6() = WallpaperWithButton(R.drawable.w6_type_of_workout, "Wallpaper 6")
-@Composable fun Wallpaper7() = WallpaperWithButton(R.drawable.w7_motivation, "Wallpaper 7")
-@Composable fun Wallpaper8() = WallpaperWithButton(R.drawable.w8_reminders, "Wallpaper 8")
-@Composable fun Wallpaper9() = WallpaperWithButton(R.drawable.w9_time_management, "Wallpaper 9")
-@Composable fun Wallpaper10() = WallpaperWithButton(R.drawable.w10_solo_or_group, "Wallpaper 10")
-@Composable fun Wallpaper11() = WallpaperWithButton(R.drawable.w11_time_of_day, "Wallpaper 11")
-@Composable fun Wallpaper12() = WallpaperWithButton(R.drawable.w12_check_in, "Wallpaper 12")
-
-@Composable
-fun QuestionScreen() {
-    Wallpaper1()
-}
-
 @Preview(showBackground = true)
 @Composable
-fun QuestionScreenPreview() {
+fun QuestionnaireScreenPreview() {
     VitaHabitTheme {
-        QuestionScreen()
+        QuestionnaireScreen(onQuestionnaireComplete = {})
     }
 }

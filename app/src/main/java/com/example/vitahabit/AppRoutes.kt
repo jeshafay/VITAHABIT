@@ -4,6 +4,7 @@ object AppRoutes {
     // Routes for the root navigator in MainActivity
     const val START_LOGIN = "start_login"
     const val LOGIN = "login"
+    const val QUESTIONS = "questions"
     const val MAIN_APP = "main_app" // This hosts the screens with the bottom bar
 
     // Routes for screens WITHIN the main app (nested navigator)

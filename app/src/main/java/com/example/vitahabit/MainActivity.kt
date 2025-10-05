@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.vitahabit.screens.DashboardScreen
+import com.example.vitahabit.screens.LoginScreen
+import com.example.vitahabit.screens.MainScreen
+import com.example.vitahabit.screens.QuestionnaireScreen
+import com.example.vitahabit.screens.StartLoginScreen
+import com.example.vitahabit.screens.TrackerScreen
 import com.example.vitahabit.screens.exerciselist.ExerciseListScreen
 import com.example.vitahabit.screens.progress.AchievementsScreen
-import com.example.vitahabit.screens.TrackerScreen
-import com.example.vitahabit.screens.LoginScreen
-import com.example.vitahabit.screens.*
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,10 +47,9 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(startState: AppStartState) {
     val navController = rememberNavController()
 
-    // --- 🎯 CHANGE #1: Update the start destination for logged out users ---
     val startDestination = when (startState) {
         is AppStartState.LoggedIn -> AppRoutes.MAIN_APP
-        is AppStartState.LoggedOut -> AppRoutes.START_LOGIN // Changed from LOGIN
+        is AppStartState.LoggedOut -> AppRoutes.START_LOGIN
         is AppStartState.Loading -> "loading"
     }
 
@@ -68,7 +68,6 @@ fun AppNavigation(startState: AppStartState) {
             composable(AppRoutes.START_LOGIN) {
                 StartLoginScreen(
                     onLoginClick = {
-
                         navController.navigate(AppRoutes.LOGIN)
                     }
                 )
@@ -77,8 +76,19 @@ fun AppNavigation(startState: AppStartState) {
             composable(AppRoutes.LOGIN) {
                 LoginScreen(
                     onLoginClick = {
+                        navController.navigate(AppRoutes.QUESTIONS)
+//                        navController.navigate(AppRoutes.MAIN_APP) {
+//                            popUpTo(AppRoutes.START_LOGIN) { inclusive = true }
+//                        }
+                    }
+                )
+            }
+
+            composable(AppRoutes.QUESTIONS) {
+                QuestionnaireScreen(
+                    onQuestionnaireComplete = {
                         navController.navigate(AppRoutes.MAIN_APP) {
-                            popUpTo(AppRoutes.START_LOGIN) { inclusive = true }
+                            popUpTo(AppRoutes.LOGIN) { inclusive = true }
                         }
                     }
                 )
