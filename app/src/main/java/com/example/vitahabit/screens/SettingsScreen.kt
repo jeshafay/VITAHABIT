@@ -1,5 +1,7 @@
 package com.example.vitahabit.screens
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
@@ -168,7 +170,14 @@ fun SettingsScreen(
     val navController = rememberNavController()
     val viewModel: SettingsViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = SettingsRoutes.MENU) {
+    NavHost(
+        navController = navController,
+        startDestination = SettingsRoutes.MENU,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
+    ) {
         composable(SettingsRoutes.MENU) {
             SettingsMenuScreen(
                 onProfileClick = { navController.navigate(SettingsRoutes.PROFILE) },
@@ -333,6 +342,7 @@ private fun ProfileSettingsPage(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(16.dp))
                 Box(
                     modifier = Modifier
                         .size(120.dp)

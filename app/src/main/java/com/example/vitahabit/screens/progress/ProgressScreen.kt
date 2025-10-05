@@ -1,16 +1,28 @@
 package com.example.vitahabit.screens.progress
 
 // Imports for the classes that are now in their own files
-import android.R.attr.fontWeight
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import android.content.Context
+import android.app.Activity
+import android.content.Intent
+import android.provider.MediaStore
+import android.net.Uri
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -285,14 +297,61 @@ fun BeforeAndAfterCard(
     afterWeight: String,
     photoViewModel: PhotoViewModel = viewModel()
 ) {
-    val beforeImagePicker = rememberLauncherForActivityResult(
+    val context = LocalContext.current
+    var showDialogFor by remember { mutableStateOf<String?>(null) } // "before" or "after"
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
+    // --- Image Launchers ---
+    val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> photoViewModel.beforeImageUri = uri }
+        onResult = { uri ->
+            uri?.let {
+                if (showDialogFor == "before") {
+                    photoViewModel.beforeImageUri = it
+                } else {
+                    photoViewModel.afterImageUri = it
+                }
+            }
+            // Clear the state AFTER the result is handled
+            showDialogFor = null
+        }
     )
-    val afterImagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> photoViewModel.afterImageUri = uri }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                tempCameraUri?.let {
+                    if (showDialogFor == "before") {
+                        photoViewModel.beforeImageUri = it
+                    } else {
+                        photoViewModel.afterImageUri = it
+                    }
+                }
+            }
+            // Clear the state AFTER the result is handled
+            showDialogFor = null
+        }
     )
+
+    // --- Show Dialog Logic ---
+    if (showDialogFor != null) {
+        ImageSourceDialog(
+            onDismissRequest = { showDialogFor = null },
+            onCameraClick = {
+                val newUri = createImageUri(context)
+                tempCameraUri = newUri
+                cameraLauncher.launch(newUri)
+                // DO NOT clear the state here
+            },
+            onGalleryClick = {
+                galleryLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+                // DO NOT clear the state here
+            }
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -313,7 +372,7 @@ fun BeforeAndAfterCard(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 PhotoPlaceholder(
@@ -321,26 +380,73 @@ fun BeforeAndAfterCard(
                     date = beforeDate,
                     weight = beforeWeight,
                     imageUri = photoViewModel.beforeImageUri,
-                    onClick = {
-                        beforeImagePicker.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
+                    onClick = { showDialogFor = "before" }
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 PhotoPlaceholder(
                     label = "After",
                     date = afterDate,
                     weight = afterWeight,
                     imageUri = photoViewModel.afterImageUri,
-                    onClick = {
-                        afterImagePicker.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
+                    onClick = { showDialogFor = "after" }
                 )
             }
         }
     }
+}
+
+    @Composable
+    fun ImageSourceDialog(
+        onDismissRequest: () -> Unit,
+        onCameraClick: () -> Unit,
+        onGalleryClick: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text("Choose Image", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(vertical = 2.dp)) },
+            text = {
+                Column {
+                    Text(
+                        text = "Open Camera",
+                        color = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCameraClick() }
+                            .padding(vertical = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Open Gallery",
+                        color = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onGalleryClick() }
+                            .padding(vertical = 2.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissRequest) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+fun createImageUri(context: Context): Uri {
+    val imageFile = File.createTempFile(
+        "camera_photo_${System.currentTimeMillis()}",
+        ".jpg",
+        File(context.cacheDir, "images")
+    ).apply {
+        parentFile?.mkdirs()
+    }
+    return FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        "${context.packageName}.provider",
+        imageFile
+    )
 }
 
 @Composable
@@ -452,7 +558,7 @@ fun ExerciseGraphCard(
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = exerciseName, style = MaterialTheme.typography.bodyLarge)
@@ -496,10 +602,11 @@ fun ExerciseGraphCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_goal),
                         contentDescription = "Set Goal",
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium)
+                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -508,10 +615,11 @@ fun ExerciseGraphCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_delete),
                         contentDescription = "Delete Exercise",
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium)
+                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
                 }
             }
         }

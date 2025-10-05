@@ -135,7 +135,7 @@ fun AchievementsScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Column {
-            Spacer(modifier = Modifier.height(27.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             // --- Top Bar with Back Button ---
             Box(
                 modifier = Modifier

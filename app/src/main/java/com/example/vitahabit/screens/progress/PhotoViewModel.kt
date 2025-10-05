@@ -1,6 +1,5 @@
 package com.example.vitahabit.screens.progress
 
-import coil.compose.AsyncImage // <-- Add this import
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,27 +7,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import coil.compose.AsyncImage
 
 class PhotoViewModel : ViewModel() {
     // Holds the URI for the 'Before' photo
@@ -43,8 +45,8 @@ fun PhotoPlaceholder(
     label: String,
     date: String,
     weight: String,
-    imageUri: Uri?, // <-- Add this parameter
-    onClick: () -> Unit, // <-- Add this to make it clickable
+    imageUri: Uri?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -54,7 +56,8 @@ fun PhotoPlaceholder(
     ) {
         Box(
             modifier = Modifier
-                .size(120.dp)
+                .width(120.dp)
+                .height(160.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable(onClick = onClick), // <-- Make the box clickable
@@ -70,12 +73,24 @@ fun PhotoPlaceholder(
                 )
             } else {
                 // Otherwise, show the placeholder icon
-                Icon(
-                    imageVector = Icons.Outlined.AddAPhoto,
-                    contentDescription = label,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AddAPhoto,
+                        contentDescription = label,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        "Click to Upload\nPhoto",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp, lineHeight = 13.sp),
+                        modifier = Modifier.padding(top = 8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
         Text(text = label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(vertical = 4.dp))
