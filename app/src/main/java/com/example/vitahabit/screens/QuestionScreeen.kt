@@ -33,7 +33,7 @@ fun WallpaperWithButton(resourceId: Int, description: String) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 38.dp, end = 38.dp),
+                .padding(bottom = 37.dp, end = 38.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
             Box(contentAlignment = Alignment.Center) {
