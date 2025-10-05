@@ -28,6 +28,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -143,7 +144,7 @@ private fun SettingsMenuScreen(
                 SettingsItem(text = "My Profile", icon = Icons.Filled.Person, onClick = onProfileClick)
                 SettingsItem(text = "Unit of measurements", icon = Icons.Default.SquareFoot, onClick = onUnitsClick)
                 SettingsItem(text = "Smart Weight & Reps", icon = Icons.Default.Lightbulb, onClick = onSmartFeaturesClick)
-                SettingsItem(text = "Sound", icon = Icons.Default.VolumeUp, onClick = onSoundClick)
+                SettingsItem(text = "Sound", icon = Icons.AutoMirrored.Filled.VolumeUp, onClick = onSoundClick)
                 SettingsItem(text = "Reminders", icon = Icons.Default.Notifications, onClick = onRemindersClick)
 //                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = onDisplayClick)
             }
