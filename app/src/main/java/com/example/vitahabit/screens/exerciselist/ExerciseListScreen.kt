@@ -193,7 +193,7 @@ fun ExerciseListScreen(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp),
-                thickness = 2.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outline
             )
 

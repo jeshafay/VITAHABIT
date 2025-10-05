@@ -28,13 +28,17 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true   // ✅ aktifkan desugaring
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -44,12 +48,16 @@ dependencies {
 
     implementation(libs.ui)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.ui.text)
+    implementation(libs.androidx.runtime)
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
     implementation("androidx.compose.material:material-icons-extended")
+//    implementation("com.github.v-shkl:compose-camera-image-picker:1.2.3")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -64,6 +72,9 @@ dependencies {
 //    implementation("androidx.navigation:navigation-compose:2.8.0-beta-06")
     //    implementation("androidx.navigation:navigation-fragment-ktx:2.8.0")
     //    implementation("androidx.navigation:navigation-ui-ktx:2.8.0")
+
+    // ✅ tambahin ini buat desugaring
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

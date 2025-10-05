@@ -1,28 +1,82 @@
 package com.example.vitahabit.screens
 
-import android.widget.Space
+
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.SquareFoot
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.ui.theme.VitaHabitTheme
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 private object SettingsRoutes {
     const val MENU = "settings_menu"
@@ -41,7 +95,12 @@ fun SettingsScreen(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = SettingsRoutes.MENU) {
+    NavHost(
+        navController = navController,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        startDestination = SettingsRoutes.MENU)
+    {
         composable(SettingsRoutes.MENU) {
             SettingsMenuScreen(
                 onProfileClick = { navController.navigate(SettingsRoutes.PROFILE) },
@@ -77,21 +136,16 @@ private fun SettingsMenuScreen(
         Column(
             modifier = Modifier.padding(vertical = 16.dp)
         ) {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 8.dp)
-            )
-            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
-            Spacer(modifier = Modifier.height(12.dp))
+            SettingsTopBar()
+            Spacer(modifier = Modifier.height(14.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                SettingsItem(text = "My Profile", icon = Icons.Outlined.Person, onClick = onProfileClick)
-                SettingsItem(text = "Unit of measurements", icon = Icons.Outlined.Person, onClick = onUnitsClick)
-                SettingsItem(text = "Smart Weight & Reps", icon = Icons.Outlined.Person, onClick = onSmartFeaturesClick)
-                SettingsItem(text = "Sound", icon = Icons.Outlined.Person, onClick = onSoundClick)
-                SettingsItem(text = "Reminders", icon = Icons.Outlined.Notifications, onClick = onRemindersClick)
-                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = onDisplayClick)
+                SettingsItem(text = "My Profile", icon = Icons.Filled.Person, onClick = onProfileClick)
+                SettingsItem(text = "Unit of measurements", icon = Icons.Default.SquareFoot, onClick = onUnitsClick)
+                SettingsItem(text = "Smart Weight & Reps", icon = Icons.Default.Lightbulb, onClick = onSmartFeaturesClick)
+                SettingsItem(text = "Sound", icon = Icons.Default.VolumeUp, onClick = onSoundClick)
+                SettingsItem(text = "Reminders", icon = Icons.Default.Notifications, onClick = onRemindersClick)
+//                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = onDisplayClick)
             }
         }
     }
@@ -105,7 +159,7 @@ private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
             Spacer(modifier = Modifier.height(16.dp))
             Column(
                 modifier = Modifier
@@ -122,14 +176,14 @@ private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Person,
+                        imageVector = Icons.Outlined.AccountCircle,
                         contentDescription = "Profile Picture",
                         modifier = Modifier.size(72.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.background
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Joel Nathan", style = MaterialTheme.typography.headlineSmall)
+                Text(text = "Joel Nathan", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onPrimary,)
                 Spacer(modifier = Modifier.height(4.dp))
                 TextButton(onClick = { /* TODO: Handle photo editing */ }) {
                     Text("Edit Photo", color = MaterialTheme.colorScheme.primary)
@@ -162,12 +216,13 @@ private fun UnitsSettingsPage(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(thickness= 1.dp, color = MaterialTheme.colorScheme.outline)
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 RadioButtonSettingItem(label = "Weight Unit", options = listOf("kg", "lbs"))
+                RadioButtonSettingItem(label = "Muscle Unit", options = listOf("cm", "in"))
                 RadioButtonSettingItem(label = "Distance Unit", options = listOf("km", "miles"))
             }
 
@@ -183,12 +238,13 @@ private fun SmartFeaturesSettingsPage(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                RadioButtonSettingItem(label = "Auto-Increment Weight", options = listOf("On", "Off"))
+                Text("We'll adjust you weight and reps\n based on your progress", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.padding(bottom = 12.dp).align(Alignment.CenterHorizontally),textAlign = TextAlign.Center)
+                RadioButtonSettingItem(label = "Smart Weight & Reps", options = listOf("On", "Off"))
                 }
         }
     }
@@ -202,7 +258,7 @@ private fun SoundSettingsPage(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(thickness= 1.dp, color = MaterialTheme.colorScheme.outline)
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -224,25 +280,242 @@ private fun SoundSettingsPage(onNavigateBack: () -> Unit) {
 
 @Composable
 private fun RemindersSettingsPage(onNavigateBack: () -> Unit) {
-    SettingsPageScaffold(title = "REMINDERS", onNavigateBack = onNavigateBack) { paddingValues ->
+    SettingsPageScaffold(title = "WORKOUT REMINDERS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
-            Column(
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
+            Card(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                RadioButtonSettingItem(
-                    label = "Workout Reminders",
-                    options = listOf("Daily", "Weekly", "Off")
-                )
+                Column {
+                    val days = listOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+                    days.forEachIndexed { index, day ->
+                        ReminderItem(
+                            day = day,
+                            initialTime = "09:00",
+                            isEnabled = false
+                        )
+                    }
+                }
             }
         }
     }
 }
+
+@Composable
+private fun ReminderItem(
+    day: String,
+    initialTime: String,
+    isEnabled: Boolean
+) {
+    var checked by remember { mutableStateOf(isEnabled) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    // Keep the internal state in 24-hour format for consistency
+    var selectedTime24 by remember { mutableStateOf(initialTime) }
+
+    if (showTimePicker) {
+        TimePickerDialog(
+            initialTime = selectedTime24,
+            onDismiss = { showTimePicker = false },
+            onConfirm = { newHour, newMinute ->
+                // The dialog confirms with 24-hour time
+                selectedTime24 = String.format("%02d:%02d", newHour, newMinute)
+                showTimePicker = false
+            }
+        )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Switch(
+            checked = checked,
+            onCheckedChange = { checked = it },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.surface,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                uncheckedTrackColor = MaterialTheme.colorScheme.background,
+                checkedBorderColor = Color.Transparent,
+                uncheckedBorderColor = Color.Transparent
+            )
+        )
+        Text(
+            text = day,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .weight(1f)
+        )
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.background,
+            onClick = { showTimePicker = true },
+        ) {
+            Text(
+                text = formatTime(selectedTime24),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimary.copy(
+                    alpha = if (checked) 1f else 0.5f
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+    }
+}
+
+private fun formatTime(time24: String): String {
+    // Input format is 24-hour (e.g., "HH:mm")
+    val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    // Output format is 12-hour with AM/PM (e.g., "hh:mm a")
+    val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+    return try {
+        val date = inputFormat.parse(time24)
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        time24
+    }
+}
+
+@Composable
+private fun TimePickerDialog(
+    initialTime: String,
+    onDismiss: () -> Unit,
+    onConfirm: (Int, Int) -> Unit
+) {
+    val (initialHour, initialMinute) = remember {
+        initialTime.split(":").map { it.toInt() }
+    }
+
+    val hours = (1..12).map { it.toString().padStart(2, '0') }
+    val minutes = (0..59).map { it.toString().padStart(2, '0') }
+    val amPm = listOf("AM", "PM")
+
+    // The 'middle' of the infinite list, aligned to our initial value
+    val initialHourIndex = (Int.MAX_VALUE / 2) - ((Int.MAX_VALUE / 2) % hours.size) + (initialHour -1)
+    val initialMinuteIndex = (Int.MAX_VALUE / 2) - ((Int.MAX_VALUE / 2) % minutes.size) + initialMinute
+
+    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = initialHourIndex)
+    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = initialMinuteIndex)
+    val amPmState = rememberLazyListState(initialFirstVisibleItemIndex = if (initialHour < 12) 0 else 1)
+
+    AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                val selectedHour24 = (hourState.firstVisibleItemIndex % hours.size) + 1
+                val selectedMinute = minuteState.firstVisibleItemIndex % minutes.size
+                val selectedAmPm = amPm[amPmState.firstVisibleItemIndex % amPm.size]
+                // Convert to 24-hour format for consistency
+                val finalHour = if (selectedAmPm == "PM" && selectedHour24 != 12) selectedHour24 + 12 else if (selectedAmPm == "AM" && selectedHour24 == 12) 0 else selectedHour24
+
+                onConfirm(finalHour, selectedMinute)
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        text = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ScrollablePicker(items = hours, state = hourState, modifier = Modifier.weight(1f))
+                Text(":", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onBackground)
+                ScrollablePicker(items = minutes, state = minuteState, modifier = Modifier.weight(1f))
+                ScrollablePicker(items = amPm, state = amPmState, isInfinite = false, modifier = Modifier.weight(1f))
+            }
+        }
+    )
+}
+
+@Composable
+private fun ScrollablePicker(
+    items: List<String>,
+    state: LazyListState,
+    isInfinite: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    val itemHeight = 48.dp
+    val coroutineScope = rememberCoroutineScope()
+
+    // This derived state helps us know which item is in the middle
+    val centerIndex by remember {
+        derivedStateOf { state.firstVisibleItemIndex }
+    }
+
+    // This effect snaps the list to the center item when scrolling stops
+    LaunchedEffect(state.isScrollInProgress) {
+        if (!state.isScrollInProgress) {
+            coroutineScope.launch {
+                state.animateScrollToItem(centerIndex)
+            }
+        }
+    }
+
+    LazyColumn(
+        state = state,
+        modifier = modifier.height(itemHeight * 3),
+        flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
+        // Add padding to the top and bottom to center the selected item
+        contentPadding = PaddingValues(vertical = itemHeight)
+    ) {
+        if (isInfinite) {
+            // Infinite (looping) list logic
+            items(Int.MAX_VALUE) { index ->
+                val isSelected = index == centerIndex
+                val itemIndex = index % items.size
+                Box(
+                    modifier = Modifier
+                        .height(itemHeight)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = items[itemIndex],
+                        style = if (isSelected) MaterialTheme.typography.displayMedium else MaterialTheme.typography.displaySmall,
+                        fontSize = if (isSelected) 28.sp else 19.sp,
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        } else {
+            // Finite (non-looping) list logic
+            itemsIndexed(items) { index, item ->
+                val isSelected = index == centerIndex
+                Box(
+                    modifier = Modifier
+                        .height(itemHeight)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = item, // Use 'item' directly
+                        style = if (isSelected) MaterialTheme.typography.displayMedium else MaterialTheme.typography.displaySmall,
+                        fontSize = if (isSelected) 28.sp else 19.sp,
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun DisplaySettingsPage(onNavigateBack: () -> Unit) {
@@ -252,7 +525,7 @@ private fun DisplaySettingsPage(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(thickness= 1.dp, color = MaterialTheme.colorScheme.outline)
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -276,7 +549,7 @@ private fun RadioButtonSettingItem(label: String, options: List<String>, initial
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = label, modifier = Modifier.weight(1f))
+            Text(text = label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.weight(1f))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -345,26 +618,51 @@ private fun SettingsPageScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = title) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = title, color = MaterialTheme.colorScheme.onPrimary) },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    windowInsets = TopAppBarDefaults.windowInsets
+                        .exclude(WindowInsets.statusBars)
+                        .add(WindowInsets(top = 3.dp))
                 )
-            )
-        },
+            },
         content = content
     )
 }
+
+@Composable
+fun SettingsTopBar() {
+    Spacer(modifier = Modifier.height(2.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
+
+    }
+}
+
 
 @Composable
 private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
@@ -376,7 +674,7 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -386,7 +684,7 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
             )
             Text(
                 text,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }

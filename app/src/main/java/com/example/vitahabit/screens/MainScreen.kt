@@ -1,5 +1,8 @@
 package com.example.vitahabit.screens
 
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.outlined.LibraryBooks
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.AppRoutes
+import com.example.vitahabit.R
 import com.example.vitahabit.screens.progress.ProgressScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
@@ -53,7 +58,7 @@ fun MainScreen(
 
                 items.forEach { screen ->
                     NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = null) },
+                        icon = { Icon(painter = painterResource(id = screen.iconResId), contentDescription = screen.title) },
                         label = { Text(screen.title) },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
@@ -83,6 +88,8 @@ fun MainScreen(
         NavHost(
             navController = nestedNavController,
             startDestination = AppRoutes.DASHBOARD,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppRoutes.DASHBOARD) {
@@ -106,27 +113,27 @@ fun MainScreen(
 sealed class BottomNavItem(
     val route: String,
     val title: String,
-    val icon: ImageVector
+    @DrawableRes val iconResId: Int
 ) {
     object Dashboard : BottomNavItem(
         route = AppRoutes.DASHBOARD,
         title = "Workout",
-        icon = Icons.Outlined.FitnessCenter
+        iconResId = R.drawable.dashboard_icon
     )
     object Library : BottomNavItem(
         route = AppRoutes.LIBRARY,
         title = "Library",
-        icon = Icons.Outlined.LibraryBooks
+        iconResId = R.drawable.library_icon
     )
     object Progress : BottomNavItem(
         route = AppRoutes.PROGRESS,
         title = "Progress",
-        icon = Icons.Outlined.Watch
+        iconResId = R.drawable.progression_icon
     )
     object Settings : BottomNavItem(
         route = AppRoutes.SETTINGS,
         title = "Settings",
-        icon = Icons.Outlined.Settings
+        iconResId = R.drawable.settings_icon
     )
 }
 

@@ -1,5 +1,10 @@
 package com.example.vitahabit.screens.progress
 
+// Imports for the classes that are now in their own files
+import android.R.attr.fontWeight
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,16 +23,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -51,7 +52,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vitahabit.R
 import com.example.vitahabit.ui.theme.VitaHabitTheme
+
+
+// --- Data Classes and ViewModels ---
 
 data class MeasurementData(
     val label: String,
@@ -77,8 +82,6 @@ class ProgressViewModel : ViewModel() {
     }
 
     private fun loadProgressData() {
-        // In a real app, you would get this data from your Room database.
-        // For now, we are simulating that by providing the data here.
         val bicepsColor = Color(0xFF42A5F5)
         val absColor = Color(0xFFEF5350)
         val waistColor = Color(0xFF66BB6A)
@@ -91,7 +94,7 @@ class ProgressViewModel : ViewModel() {
             weight = "75.0",
             workoutCount = "12",
             totalHours = "8.5",
-            totalVolume = "1.2k",
+            totalVolume = "32.9k",
             measurements = listOf(
                 MeasurementData("BICEPS", 47.0f, bicepsColor),
                 MeasurementData("ABS", 85.0f, absColor),
@@ -100,13 +103,23 @@ class ProgressViewModel : ViewModel() {
                 MeasurementData("SHLDRS", 127.0f, shouldersColor),
                 MeasurementData("THIGH", 68.5f, thighColor),
                 MeasurementData("CALF", 53.0f, calfColor)
+            ),
+            achievements = listOf(
+                AchievementUiModel("First Milestone", "10 workouts in a month", R.drawable.ic_launcher_foreground, true),
+                AchievementUiModel("Rising Star", "10 workouts in a month", R.drawable.ic_launcher_foreground, true),
+                AchievementUiModel("Power Month", "10 workouts in a month", R.drawable.ic_launcher_foreground, false),
             )
         )
     }
 }
 
 
-// --- 3. UI: The screen now uses the ViewModel to get its data ---
+// --- Graph Data ---
+private val yAxisLabels = listOf("150", "120", "90", "60", "30", "0")
+private val xAxisLabels = listOf("05/09", "07/09", "09/09", "11/09")
+
+// --- Main Screen Composable ---
+
 @Composable
 fun ProgressScreen(
     onNavigateToAchievements: () -> Unit,
@@ -118,53 +131,72 @@ fun ProgressScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            item {
-                Text(
-                    text = "Progress",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp, start = 28.dp, end = 28.dp, bottom = 14.dp)
-                )
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        Column(modifier = Modifier.fillMaxSize()) {
+            ProgressTopBar()
 
-            item {
-                StatisticsCard(
-                    workoutCount = uiState.workoutCount,
-                    totalHours = uiState.totalHours,
-                    totalVolume = uiState.totalVolume
-                )
-            }
-            item {
-                AchievementsCard(
-                    achievements = uiState.achievements,
-                    onNavigateToAchievements = onNavigateToAchievements
-                )
-            }
-            item {
-                BeforeAndAfterCard(
-                    // In the functional app, this data will come from the uiState
-                    beforeDate = "Jan 1, 2024",
-                    beforeWeight = "80.0 kg",
-                    afterDate = "Sep 29, 2025",
-                    afterWeight = "75.0 kg"
-                )
-            }
-            item {
-                MeasurementsCard(
-                    weight = uiState.weight,
-                    measurements = uiState.measurements
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                item {
+                    StatisticsCard(
+                        workoutCount = uiState.workoutCount,
+                        totalHours = uiState.totalHours,
+                        totalVolume = uiState.totalVolume
+                    )
+                }
+                item {
+                    AchievementsCard(
+                        achievements = uiState.achievements,
+                        onNavigateToAchievements = onNavigateToAchievements
+                    )
+                }
+                item {
+                    BeforeAndAfterCard(
+                        beforeDate = "Jan 1, 2024",
+                        beforeWeight = "80.0 kg",
+                        afterDate = "Sep 29, 2025",
+                        afterWeight = "75.0 kg"
+                    )
+                }
+                item {
+                    MeasurementsCard(
+                        weight = uiState.weight,
+                        measurements = uiState.measurements
+                    )
+                }
+                item {
+                    ExerciseGraphCard(
+                        exerciseName = "Seated Dumbbell Overhead Press",
+                        exerciseDetail = "Single Arm",
+                        maxWeight = "120",
+                        maxUnit = "kg"
+                    )
+                }
             }
         }
+    }
+}
+
+// --- Top Bar Composable ---
+
+@Composable
+fun ProgressTopBar() {
+    Spacer(modifier = Modifier.height(18.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Progress",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
     }
 }
 
@@ -210,12 +242,12 @@ fun AchievementsCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Achievements",
+                    text = "ACHIEVEMENTS",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -226,7 +258,12 @@ fun AchievementsCard(
                     Text("More")
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Start training and achieve your goals",
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 10.sp,
+            )
+            Spacer(modifier = Modifier.height(28.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
@@ -244,12 +281,22 @@ fun BeforeAndAfterCard(
     beforeDate: String,
     beforeWeight: String,
     afterDate: String,
-    afterWeight: String
+    afterWeight: String,
+    photoViewModel: PhotoViewModel = viewModel()
 ) {
+    val beforeImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> photoViewModel.beforeImageUri = uri }
+    )
+    val afterImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> photoViewModel.afterImageUri = uri }
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal =16.dp),
+            .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -260,32 +307,40 @@ fun BeforeAndAfterCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                "Before and After",
+                "BEFORE AND AFTER",
                 style = MaterialTheme.typography.titleMedium,
             )
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                PhotoPlaceholder(label = "Before", date = beforeDate, weight = beforeWeight)
-                PhotoPlaceholder(label = "After", date = afterDate, weight = afterWeight)
-            }
-
-            OutlinedButton(onClick = { /* TODO: Launch image picker from gallery */ }) {
-                Icon(
-                    imageVector = Icons.Default.AddAPhoto,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                PhotoPlaceholder(
+                    label = "Before",
+                    date = beforeDate,
+                    weight = beforeWeight,
+                    imageUri = photoViewModel.beforeImageUri,
+                    onClick = {
+                        beforeImagePicker.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
                 )
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text("Update Photos", color = MaterialTheme.colorScheme.tertiary)
+                PhotoPlaceholder(
+                    label = "After",
+                    date = afterDate,
+                    weight = afterWeight,
+                    imageUri = photoViewModel.afterImageUri,
+                    onClick = {
+                        afterImagePicker.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
             }
         }
     }
 }
-
 
 @Composable
 fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
@@ -352,7 +407,175 @@ fun MeasurementsCard(weight: String, measurements: List<MeasurementData>) {
     }
 }
 
+@Composable
+fun ExerciseGraphCard(
+    exerciseName: String,
+    exerciseDetail: String,
+    maxWeight: String,
+    maxUnit: String
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "EXERCISE GRAPHS",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Add exercises and set goals to see\nyour progress over time",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_add),
+                            contentDescription = "Track Exercise",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = exerciseName, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = exerciseDetail, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = maxWeight,
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = maxUnit,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
+            }
+            ExerciseGraph(
+                yAxisLabels = yAxisLabels,
+                xAxisLabels = xAxisLabels
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { /* TODO */ }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_goal),
+                        contentDescription = "Set Goal",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { /* TODO */ }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_delete),
+                        contentDescription = "Delete Exercise",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
+    }
+}
+
+
 // --- Reusable Helper Composables ---
+
+@Composable
+fun ExerciseGraph(
+    yAxisLabels: List<String>,
+    xAxisLabels: List<String>,
+    modifier: Modifier = Modifier
+) {
+    val dividerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+    val labelColor = MaterialTheme.colorScheme.onSurface
+    val labelWidth = 30.dp
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(180.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            yAxisLabels.forEach { label ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = labelColor,
+                        modifier = Modifier.width(labelWidth),
+                        textAlign = TextAlign.End
+                    )
+                    HorizontalDivider(
+                        color = dividerColor,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = labelWidth + 8.dp), // Offset to align with the graph
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                xAxisLabels.forEach { label ->
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = labelColor
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun MeasurementBar(
@@ -367,16 +590,23 @@ fun MeasurementBar(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = value.toString(), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = value.toString(), style = MaterialTheme.typography.labelSmall)
         Box(
             modifier = Modifier
                 .width(30.dp)
                 .height(barHeight)
                 .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                .background(MaterialTheme.colorScheme.background)
+                .background(color = MaterialTheme.colorScheme.background)
         )
-        Text(text = "cm", style = MaterialTheme.typography.labelSmall)
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = color)
+        Text(
+            text = "cm",
+            style = MaterialTheme.typography.labelSmall
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = color
+        )
     }
 }
 
@@ -389,13 +619,13 @@ fun StatItem(title: String, value: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 26.sp,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = title,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
     }
@@ -408,7 +638,7 @@ fun TimeframeSelector(modifier: Modifier = Modifier) {
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         timeframes.forEach { timeframe ->
@@ -426,7 +656,7 @@ fun TimeframeSelector(modifier: Modifier = Modifier) {
 @Composable
 fun SelectableChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
-    val textColor = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary // keep selected text color as background
+    val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier
@@ -443,35 +673,6 @@ fun SelectableChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
         )
     }
 }
-
-@Composable
-fun PhotoPlaceholder(label: String, date: String, weight: String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // This Box is a placeholder for the user's uploaded image
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Person,
-                contentDescription = label,
-                modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Text(text = label, style = MaterialTheme.typography.titleMedium)
-        Text(text = date, style = MaterialTheme.typography.bodySmall)
-        Text(text = weight, style = MaterialTheme.typography.bodySmall)
-    }
-}
-
 @Composable
 fun AchievementIcon(achievement: AchievementUiModel) {
     Column(
@@ -496,11 +697,12 @@ fun AchievementIcon(achievement: AchievementUiModel) {
     }
 }
 
+// --- Preview Composable ---
+
 @Preview(showBackground = true)
 @Composable
 fun ProgressScreenPreview() {
     VitaHabitTheme {
-        // Update preview to pass the required parameter
         ProgressScreen(onNavigateToAchievements = {})
     }
 }

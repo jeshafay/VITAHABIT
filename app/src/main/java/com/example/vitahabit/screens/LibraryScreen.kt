@@ -79,46 +79,78 @@ fun LibraryScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // --- Header Item ---
-            item {
-                Text(
-                    text = "Library",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
-                )
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+        Column {
+            LibraryTopBar()
 
-            // --- Filter Chips Section ---
-            item {
-                FilterChipsSection()
-            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 2.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // --- Filter Chips Section ---
+                item {
+                    FilterChipsSection()
+                }
 
-            // --- "My Saved Routines" Section ---
-            item {
-                SavedRoutinesSection(routines = uiState.savedRoutines)
-            }
+                // --- "My Saved Routines" Section ---
+                item {
+                    SavedRoutinesSection(routines = uiState.savedRoutines)
+                }
 
-            // --- "Exercise Encyclopedia" Section ---
-            item {
-                Text(
-                    text = "Exercise Encyclopedia",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            item {
-                ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+                // --- "Exercise Encyclopedia" Section ---
+                item {
+                    Text(
+                        text = "Exercise Encyclopedia",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                val videoRows = uiState.exerciseVideos.chunked(2)
+//                item {
+//                    ExerciseEncyclopediaSection(videos = uiState.exerciseVideos)
+//                }
+                items(videoRows) { rowItems ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Add each video card to the row
+                        rowItems.forEach { video ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                VideoThumbnailCard(video = video)
+                            }
+                        }
+                        // If there's an odd number of items, add a spacer to the last row
+                        // to prevent the single item from stretching.
+                        if (rowItems.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+fun LibraryTopBar() {
+    Spacer(modifier = Modifier.height(18.dp))
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Library",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
     }
 }
 
@@ -181,23 +213,6 @@ private fun SavedRoutinesSection(routines: List<SavedRoutine>) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun ExerciseEncyclopediaSection(videos: List<ExerciseVideo>) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .height(900.dp)
-            .padding(horizontal = 16.dp),
-        userScrollEnabled = false,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(videos) { video ->
-            VideoThumbnailCard(video = video)
         }
     }
 }
