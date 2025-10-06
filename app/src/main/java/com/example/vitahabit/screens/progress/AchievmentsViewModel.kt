@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vitahabit.R // Assuming you have placeholder resources
@@ -140,7 +141,8 @@ fun AchievementsScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(horizontal = 8.dp)
+                    .padding(top = 8.dp)
             ) {
                 IconButton(
                     onClick = onNavigateBack,
@@ -153,6 +155,7 @@ fun AchievementsScreen(
                 }
                 Text(
                     text = "Achievements",
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -195,7 +198,7 @@ fun AchievementItem(achievement: AchievementUiModel) {
         )
         Text(
             text = achievement.description,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp, lineHeight = 12.sp),
             textAlign = TextAlign.Center
         )
     }

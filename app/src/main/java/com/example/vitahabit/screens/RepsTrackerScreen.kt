@@ -37,7 +37,7 @@ fun TrackerScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 10.dp),
 //                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -106,6 +106,7 @@ fun TrackerScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 0.dp),
+                        color = MaterialTheme.colorScheme.outline,
                         thickness = 1.dp
                     )
                     Spacer(modifier = Modifier.height(10.dp))

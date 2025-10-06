@@ -1,28 +1,17 @@
 package com.example.vitahabit.screens.progress
 
 // Imports for the classes that are now in their own files
+import android.content.Context
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import android.content.Context
-import android.app.Activity
-import android.content.Intent
-import android.provider.MediaStore
-import android.net.Uri
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Objects
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -54,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,10 +53,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vitahabit.R
 import com.example.vitahabit.ui.theme.VitaHabitTheme
+import java.io.File
+import java.util.Objects
 
 
 // --- Data Classes and ViewModels ---
@@ -268,7 +262,7 @@ fun AchievementsCard(
                     onClick = onNavigateToAchievements,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text("More")
+                    Text("More", color = MaterialTheme.colorScheme.onSurface, fontSize = 11.sp)
                 }
             }
             Text(
@@ -558,7 +552,7 @@ fun ExerciseGraphCard(
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
+                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = exerciseName, style = MaterialTheme.typography.bodyLarge)
@@ -606,7 +600,7 @@ fun ExerciseGraphCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
+                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -619,7 +613,7 @@ fun ExerciseGraphCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary,)
+                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -728,13 +722,13 @@ fun StatItem(title: String, value: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLarge.copy( fontWeight = FontWeight.Normal),
             fontSize = 26.sp,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
             textAlign = TextAlign.Center
         )
     }
@@ -765,7 +759,7 @@ fun TimeframeSelector(modifier: Modifier = Modifier) {
 @Composable
 fun SelectableChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
-    val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
+    val textColor = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier

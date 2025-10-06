@@ -93,8 +93,8 @@ fun PhotoPlaceholder(
                 }
             }
         }
-        Text(text = label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(vertical = 4.dp))
-        Text(text = date, style = MaterialTheme.typography.bodySmall)
-        Text(text = weight, style = MaterialTheme.typography.bodySmall)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(top = 4.dp, bottom = 8.dp))
+        Text(text = date, style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp))
+        Text(text = weight, style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp), modifier = Modifier.padding(bottom = 4.dp))
     }
 }

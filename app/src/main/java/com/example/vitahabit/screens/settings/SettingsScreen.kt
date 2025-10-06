@@ -1,47 +1,101 @@
-package com.example.vitahabit.screens
+package com.example.vitahabit.screens.settings
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SquareFoot
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.vitahabit.R
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 data class ReminderSetting(
     val day: String,
@@ -49,109 +103,6 @@ data class ReminderSetting(
     val isEnabled: Boolean = false
 )
 
-data class SettingsUiState(
-    // Profile
-    val gender: String = "Male",
-    val age: String = "30",
-    val weight: String = "75.0",
-    val height: String = "175.0",
-
-    // Units
-    val weightUnit: String = "kg",
-    val muscleUnit: String = "cm",
-    val distanceUnit: String = "km",
-
-    // Smart Features
-    val smartFeatures: String = "On",
-
-    // Sound
-    val soundBeforeStep: String = "0 sec",
-    val vibrationBeforeStep: String = "0 sec",
-
-    // Reminders
-    val reminders: List<ReminderSetting> = listOf(
-        ReminderSetting("Sunday"),
-        ReminderSetting("Monday"),
-        ReminderSetting("Tuesday"),
-        ReminderSetting("Wednesday"),
-        ReminderSetting("Thursday"),
-        ReminderSetting("Friday"),
-        ReminderSetting("Saturday")
-    )
-)
-
-// <<< CHANGED: Expanded ViewModel with update functions for all settings
-class SettingsViewModel : ViewModel() {
-    private val _uiState = mutableStateOf(SettingsUiState())
-    val uiState: State<SettingsUiState> = _uiState
-
-    // --- Profile Updates ---
-    fun updateGender(newGender: String) {
-        _uiState.value = _uiState.value.copy(gender = newGender)
-    }
-
-    fun updateAge(millis: Long?) {
-        millis?.let {
-            val today = Calendar.getInstance()
-            val birthDate = Calendar.getInstance().apply { timeInMillis = it }
-            var calculatedAge = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
-            if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
-                calculatedAge--
-            }
-            _uiState.value = _uiState.value.copy(age = calculatedAge.toString())
-        }
-    }
-
-    fun updateWeight(newWeight: String) {
-        _uiState.value = _uiState.value.copy(weight = newWeight)
-    }
-
-    fun updateHeight(newHeight: String) {
-        _uiState.value = _uiState.value.copy(height = newHeight)
-    }
-
-    // --- Units Updates ---
-    fun updateWeightUnit(newUnit: String) {
-        _uiState.value = _uiState.value.copy(weightUnit = newUnit)
-    }
-    fun updateMuscleUnit(newUnit: String) {
-        _uiState.value = _uiState.value.copy(muscleUnit = newUnit)
-    }
-    fun updateDistanceUnit(newUnit: String) {
-        _uiState.value = _uiState.value.copy(distanceUnit = newUnit)
-    }
-
-    // --- Smart Features Update ---
-    fun updateSmartFeatures(newValue: String) {
-        _uiState.value = _uiState.value.copy(smartFeatures = newValue)
-    }
-
-    // --- Sound Updates ---
-    fun updateSoundBeforeStep(newValue: String) {
-        _uiState.value = _uiState.value.copy(soundBeforeStep = newValue)
-    }
-    fun updateVibrationBeforeStep(newValue: String) {
-        _uiState.value = _uiState.value.copy(vibrationBeforeStep = newValue)
-    }
-
-    // --- Reminder Updates ---
-    fun updateReminderEnabled(day: String, isEnabled: Boolean) {
-        val updatedReminders = _uiState.value.reminders.map {
-            if (it.day == day) it.copy(isEnabled = isEnabled) else it
-        }
-        _uiState.value = _uiState.value.copy(reminders = updatedReminders)
-    }
-
-    fun updateReminderTime(day: String, newTime: String) {
-        val updatedReminders = _uiState.value.reminders.map {
-            if (it.day == day) it.copy(time = newTime) else it
-        }
-        _uiState.value = _uiState.value.copy(reminders = updatedReminders)
-    }
-}
-
-
-// --- 2. Routes and Main Settings NavHost ---
 private object SettingsRoutes {
     const val MENU = "settings_menu"
     const val PROFILE = "settings_profile"
@@ -185,6 +136,7 @@ fun SettingsScreen(
                 onSmartFeaturesClick = { navController.navigate(SettingsRoutes.SMART_FEATURES) },
                 onSoundClick = { navController.navigate(SettingsRoutes.SOUND) },
                 onRemindersClick = { navController.navigate(SettingsRoutes.REMINDERS) },
+                onDisplayClick = { navController.navigate(SettingsRoutes.DISPLAY) },
             )
         }
         // Pass the shared ViewModel to each sub-page that needs it
@@ -193,7 +145,7 @@ fun SettingsScreen(
         composable(SettingsRoutes.SMART_FEATURES) { SmartFeaturesSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
         composable(SettingsRoutes.SOUND) { SoundSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
         composable(SettingsRoutes.REMINDERS) { RemindersSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
-//        composable(SettingsRoutes.DISPLAY) { DisplaySettingsPage(onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.DISPLAY) { DisplaySettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
 
     }
 }
@@ -205,6 +157,7 @@ private fun SettingsMenuScreen(
     onSmartFeaturesClick: () -> Unit,
     onSoundClick: () -> Unit,
     onRemindersClick: () -> Unit,
+    onDisplayClick: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -222,7 +175,7 @@ private fun SettingsMenuScreen(
                 SettingsItem(text = "Smart Weight & Reps", icon = Icons.Default.Lightbulb, onClick = onSmartFeaturesClick)
                 SettingsItem(text = "Sound", icon = Icons.Default.VolumeUp, onClick = onSoundClick)
                 SettingsItem(text = "Reminders", icon = Icons.Default.Notifications, onClick = onRemindersClick)
-//                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Filled.List, onClick = onDisplayClick, modifier = itemModifier)
+                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Filled.List, onClick = onDisplayClick)
             }
         }
     }
@@ -258,7 +211,6 @@ private fun ProfileSettingsPage(
             }
         )
     }
-
     if (showDatePicker) {
         DatePickerDialog(
             colors = DatePickerDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
@@ -271,43 +223,51 @@ private fun ProfileSettingsPage(
             },
             dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text("Cancel") } }
         ) {
-            DatePicker(
-                state = datePickerState,
-                colors = DatePickerDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    headlineContentColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    subheadContentColor = MaterialTheme.colorScheme.primary,
-
-                    yearContentColor = MaterialTheme.colorScheme.onSurface,
-                    selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedYearContainerColor = MaterialTheme.colorScheme.primary,
-
-                    selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedDayContainerColor = MaterialTheme.colorScheme.primary,
-                    todayContentColor = MaterialTheme.colorScheme.primary,
-                    todayDateBorderColor = Color.Transparent
-                ),
-                title = {
-                    Text(
-                        "Select Birthdate",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 12.dp)
-                    )
-                },
-                headline = {
-                    val selectedDateText = formatDate(datePickerState.selectedDateMillis)
-                    Text(
-                        text = selectedDateText,
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontSize = 36.sp
-                        ),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, bottom = 12.dp)
-                    )
-                }
+            // Create a custom color scheme just for the DatePicker
+            val datePickerColors = MaterialTheme.colorScheme.copy(
+                // This controls the "October 2025" text and arrows
+                onSurfaceVariant = MaterialTheme.colorScheme.onSurface
             )
+
+            MaterialTheme(colorScheme = datePickerColors) {
+                DatePicker(
+                    state = datePickerState,
+                    colors = DatePickerDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        headlineContentColor = MaterialTheme.colorScheme.primary,
+
+                        // You might need to set this explicitly now if the above doesn't work alone
+                        subheadContentColor = MaterialTheme.colorScheme.onSurface,
+
+                        yearContentColor = MaterialTheme.colorScheme.onSurface,
+                        selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedYearContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+                        todayContentColor = MaterialTheme.colorScheme.primary,
+                        todayDateBorderColor = Color.Transparent
+                    ),
+                    title = {
+                        Text(
+                            "Select Birthdate",
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 12.dp)
+                        )
+                    },
+                    headline = {
+                        val selectedDateText = formatDate(datePickerState.selectedDateMillis)
+                        Text(
+                            text = selectedDateText,
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontSize = 36.sp
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 24.dp, end = 12.dp, bottom = 12.dp)
+                        )
+                    }
+                )
+            }
         }
     }
     if (showWeightPicker) {
@@ -729,24 +689,76 @@ private fun ScrollablePicker(
 }
 
 
-//@Composable
-//private fun DisplaySettingsPage(onNavigateBack: () -> Unit) {
-//    SettingsPageScaffold(title = "WORKOUT TAB DISPLAY", onNavigateBack = onNavigateBack) { paddingValues ->
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(paddingValues)
-//        ) {
-//            HorizontalDivider(thickness= 1.dp, color = MaterialTheme.colorScheme.outline)
-//            Column(
-//                modifier = Modifier.padding(16.dp),
-//                verticalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                RadioButtonSettingItem(label = "Default View", options = listOf("List", "Grid"))
-//            }
-//        }
-//    }
-//}
+@Composable
+private fun DisplaySettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+
+    SettingsPageScaffold(title = "WORKOUT TAB DISPLAY", onNavigateBack = onNavigateBack) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DisplayOptionItem(
+                    label = "Expanded",
+                    isSelected = uiState.workoutDisplayMode == "Expanded",
+                    onClick = { viewModel.updateWorkoutDisplayMode("Expanded") },
+                    drawableResId = R.drawable.expanded_setting_preview
+                )
+
+                DisplayOptionItem(
+                    label = "Compact",
+                    isSelected = uiState.workoutDisplayMode == "Compact",
+                    onClick = { viewModel.updateWorkoutDisplayMode("Compact") },
+                    drawableResId = R.drawable.compact_setting_preview
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DisplayOptionItem(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    drawableResId: Int
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.clickable(
+            role = Role.RadioButton,
+            onClick = onClick
+        )
+    ) {
+        Image(
+            painter = painterResource(id = drawableResId),
+            contentDescription = label,
+            modifier = Modifier
+                .width(120.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        RadioButton(
+            selected = isSelected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = MaterialTheme.colorScheme.primary,
+                unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
+    }
+}
 
 @Composable
 private fun RadioButtonSettingItem(
@@ -805,6 +817,7 @@ private fun SettingsPageScaffold(title: String, onNavigateBack: () -> Unit, cont
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
+                windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets(top = 3.dp)),
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onBackground
@@ -877,7 +890,7 @@ private fun ProfileDetailRow(label: String, value: String, onClick: () -> Unit) 
             shape = CircleShape,
             color = MaterialTheme.colorScheme.background,
             onClick = onClick,
-            modifier = Modifier.defaultMinSize(minWidth = 80.dp)
+            modifier = Modifier.width(145.dp)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -901,7 +914,10 @@ private fun GenderPickerDialog(currentGender: String, onDismiss: () -> Unit, onC
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
-        title = { Text("Select Gender") },
+        title = { Text("Select Gender",
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(bottom = 12.dp)) },
         text = {
             Column {
                 genders.forEach { gender ->
@@ -914,7 +930,7 @@ private fun GenderPickerDialog(currentGender: String, onDismiss: () -> Unit, onC
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(selected = (gender == selectedGender), onClick = null)
-                        Text(text = gender, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = 8.dp))
+                        Text(text = gender, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }
@@ -937,13 +953,13 @@ private fun ValuePickerDialog(
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
-        title = { Text(title) },
+        title = { Text(title, style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = MaterialTheme.colorScheme.onPrimary) },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it.filter { char -> char.isDigit() || char == '.' } },
-                label = { Text("Value") },
-                suffix = { Text(unit) },
+                label = { Text("Value", color = MaterialTheme.colorScheme.onSurface) },
+                suffix = { Text(unit, color = MaterialTheme.colorScheme.onSurface) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -961,6 +977,6 @@ private fun ValuePickerDialog(
 @Composable
 fun SettingsScreenPreview() {
     VitaHabitTheme {
-        SettingsMenuScreen({}, {}, {}, {}, {})
+        SettingsMenuScreen({}, {}, {}, {}, {}, {})
     }
 }
