@@ -398,11 +398,11 @@ fun BeforeAndAfterCard(
         AlertDialog(
             onDismissRequest = onDismissRequest,
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Choose Image", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(vertical = 2.dp)) },
+            title = { Text("Choose Image", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(vertical = 2.dp)) },
             text = {
                 Column {
                     Text(
-                        text = "Open Camera",
+                        text = "Open Camera (belum bisa)",
                         color = Color.White,
                         modifier = Modifier
                             .fillMaxWidth()

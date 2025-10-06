@@ -130,16 +130,19 @@ fun TrackerScreen(
                             Text(
                                 text = "70 kg",
                                 style = MaterialTheme.typography.bodyMedium,
+                                fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             Text(
                                 text = "${currentExercise.repsAmount} reps",
                                 style = MaterialTheme.typography.bodyMedium,
+                                fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             Text(
                                 text = "Today",
                                 style = MaterialTheme.typography.bodyMedium,
+                                fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
@@ -148,7 +151,7 @@ fun TrackerScreen(
                             color = MaterialTheme.colorScheme.outline,
                             thickness = 1.dp
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(13.dp))
                     }
                     RepList(exercise = currentExercise)
                 }
@@ -173,7 +176,7 @@ fun TrackerScreen(
                 Card(
                     onClick = { /* TODO: Handle log all sets click */ },
                     modifier = Modifier
-                        .width(200.dp)
+                        .width(180.dp)
                         .align(Alignment.CenterHorizontally), // Center this specific item
                     colors = CardDefaults.cardColors(
                         containerColor = Color(0xFFD9D9D9)
@@ -220,7 +223,7 @@ fun TrackerScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 12.dp, horizontal = 16.dp),
+                            .padding(vertical = 10.dp, horizontal = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Image(
@@ -246,6 +249,7 @@ fun TrackerScreen(
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(15.dp))
             }
         }
     }
@@ -323,7 +327,7 @@ fun RepListItem(setNumber: Int) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(vertical = 12.dp) // Apply vertical padding to the row
+                .padding(vertical = 2.dp) // Apply vertical padding to the row
                 .fillMaxWidth()
         ) {
             // Box for the weight section
