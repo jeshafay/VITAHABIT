@@ -163,10 +163,47 @@ fun TrackerScreen(
                     Text("No Exercise Data Found")
                 }
             }
+        }
+    }
+}
 
-            // --- Bottom Buttons Section (FIXED) ---
+// Helper composable for the stats card to reduce repetition
+@Composable
+fun StatColumn(title: String, value: String) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
+    }
+}
+
+
+@Composable
+fun RepList(exercise: Exercise, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // This part is correct
+        items(count = exercise.repsAmount) { setNumber ->
+            RepListItem(setNumber = setNumber + 1)
+        }
+
+        // FIX: Wrap the entire footer Column in an item { } block.
+        // This tells the LazyColumn to treat this whole section as a single list item.
+        item {
             Column(
-                // FIX: Use Alignment.Start to align children to the left (start) of the column.
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -251,40 +288,6 @@ fun TrackerScreen(
                 }
                 Spacer(modifier = Modifier.height(15.dp))
             }
-        }
-    }
-}
-
-// Helper composable for the stats card to reduce repetition
-@Composable
-fun StatColumn(title: String, value: String) {
-    Column(
-        modifier = Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondary
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSecondary
-        )
-    }
-}
-
-
-@Composable
-fun RepList(exercise: Exercise, modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(count = exercise.repsAmount) { setNumber ->
-            RepListItem(setNumber = setNumber + 1)
         }
     }
 }
