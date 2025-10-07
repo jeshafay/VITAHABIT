@@ -1,7 +1,8 @@
 package com.example.vitahabit.screens.progress
 
 // Imports for the classes that are now in their own files
-import android.R.attr.fontWeight
+import android.content.Context
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,10 +53,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vitahabit.R
 import com.example.vitahabit.ui.theme.VitaHabitTheme
+import java.io.File
+import java.util.Objects
 
 
 // --- Data Classes and ViewModels ---
@@ -193,7 +199,8 @@ fun ProgressTopBar() {
         ) {
             Text(
                 text = "Progress",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
@@ -255,7 +262,7 @@ fun AchievementsCard(
                     onClick = onNavigateToAchievements,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text("More")
+                    Text("More", color = MaterialTheme.colorScheme.onSurface, fontSize = 11.sp)
                 }
             }
             Text(
@@ -284,14 +291,61 @@ fun BeforeAndAfterCard(
     afterWeight: String,
     photoViewModel: PhotoViewModel = viewModel()
 ) {
-    val beforeImagePicker = rememberLauncherForActivityResult(
+    val context = LocalContext.current
+    var showDialogFor by remember { mutableStateOf<String?>(null) } // "before" or "after"
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
+    // --- Image Launchers ---
+    val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> photoViewModel.beforeImageUri = uri }
+        onResult = { uri ->
+            uri?.let {
+                if (showDialogFor == "before") {
+                    photoViewModel.beforeImageUri = it
+                } else {
+                    photoViewModel.afterImageUri = it
+                }
+            }
+            // Clear the state AFTER the result is handled
+            showDialogFor = null
+        }
     )
-    val afterImagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> photoViewModel.afterImageUri = uri }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                tempCameraUri?.let {
+                    if (showDialogFor == "before") {
+                        photoViewModel.beforeImageUri = it
+                    } else {
+                        photoViewModel.afterImageUri = it
+                    }
+                }
+            }
+            // Clear the state AFTER the result is handled
+            showDialogFor = null
+        }
     )
+
+    // --- Show Dialog Logic ---
+    if (showDialogFor != null) {
+        ImageSourceDialog(
+            onDismissRequest = { showDialogFor = null },
+            onCameraClick = {
+                val newUri = createImageUri(context)
+                tempCameraUri = newUri
+                cameraLauncher.launch(newUri)
+                // DO NOT clear the state here
+            },
+            onGalleryClick = {
+                galleryLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+                // DO NOT clear the state here
+            }
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -312,7 +366,7 @@ fun BeforeAndAfterCard(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 PhotoPlaceholder(
@@ -320,26 +374,73 @@ fun BeforeAndAfterCard(
                     date = beforeDate,
                     weight = beforeWeight,
                     imageUri = photoViewModel.beforeImageUri,
-                    onClick = {
-                        beforeImagePicker.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
+                    onClick = { showDialogFor = "before" }
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 PhotoPlaceholder(
                     label = "After",
                     date = afterDate,
                     weight = afterWeight,
                     imageUri = photoViewModel.afterImageUri,
-                    onClick = {
-                        afterImagePicker.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
+                    onClick = { showDialogFor = "after" }
                 )
             }
         }
     }
+}
+
+    @Composable
+    fun ImageSourceDialog(
+        onDismissRequest: () -> Unit,
+        onCameraClick: () -> Unit,
+        onGalleryClick: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text("Choose Image", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(vertical = 2.dp)) },
+            text = {
+                Column {
+                    Text(
+                        text = "Open Camera (belum bisa)",
+                        color = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCameraClick() }
+                            .padding(vertical = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Open Gallery",
+                        color = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onGalleryClick() }
+                            .padding(vertical = 2.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissRequest) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+fun createImageUri(context: Context): Uri {
+    val imageFile = File.createTempFile(
+        "camera_photo_${System.currentTimeMillis()}",
+        ".jpg",
+        File(context.cacheDir, "images")
+    ).apply {
+        parentFile?.mkdirs()
+    }
+    return FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        "${context.packageName}.provider",
+        imageFile
+    )
 }
 
 @Composable
@@ -451,7 +552,7 @@ fun ExerciseGraphCard(
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "Track Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = exerciseName, style = MaterialTheme.typography.bodyLarge)
@@ -495,10 +596,11 @@ fun ExerciseGraphCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_goal),
                         contentDescription = "Set Goal",
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium)
+                    Text("Set Goal", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -507,10 +609,11 @@ fun ExerciseGraphCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_delete),
                         contentDescription = "Delete Exercise",
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium)
+                    Text("Delete Exercise", style = MaterialTheme.typography.bodyMedium, color =  MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -619,13 +722,13 @@ fun StatItem(title: String, value: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLarge.copy( fontWeight = FontWeight.Normal),
             fontSize = 26.sp,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
             textAlign = TextAlign.Center
         )
     }
@@ -656,7 +759,7 @@ fun TimeframeSelector(modifier: Modifier = Modifier) {
 @Composable
 fun SelectableChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
-    val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
+    val textColor = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier

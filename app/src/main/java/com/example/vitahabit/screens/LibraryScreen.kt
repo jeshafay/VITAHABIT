@@ -172,6 +172,14 @@ private fun FilterChipsSection() {
                 selected = selectedChipIndex == index,
                 onClick = { selectedChipIndex = if (selectedChipIndex == index) -1 else index },
                 label = { Text(filters[index], color = MaterialTheme.colorScheme.onSurface) },
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = Color.Transparent,
+                    labelColor = MaterialTheme.colorScheme.onSurface,
+                    iconColor = MaterialTheme.colorScheme.onSurface,
+                    selectedContainerColor = MaterialTheme.colorScheme.surface,
+                    selectedLabelColor = MaterialTheme.colorScheme.onSurface,
+                    selectedTrailingIconColor = MaterialTheme.colorScheme.onSurface
+                ),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,

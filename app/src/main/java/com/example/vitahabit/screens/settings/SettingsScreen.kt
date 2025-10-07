@@ -1,9 +1,10 @@
-package com.example.vitahabit.screens
-
+package com.example.vitahabit.screens.settings
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,23 +13,28 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -39,11 +45,16 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -53,6 +64,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -66,18 +78,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.vitahabit.R
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+
+data class ReminderSetting(
+    val day: String,
+    val time: String = "09:00", // Stored in 24-hour format "HH:mm"
+    val isEnabled: Boolean = false
+)
 
 private object SettingsRoutes {
     const val MENU = "settings_menu"
@@ -89,19 +113,22 @@ private object SettingsRoutes {
     const val DISPLAY = "settings_display"
 }
 
+
 @Composable
 fun SettingsScreen(
-    onProfileClick: () -> Unit,
-    onNotificationsClick: () -> Unit
+
 ) {
     val navController = rememberNavController()
+    val viewModel: SettingsViewModel = viewModel()
 
     NavHost(
         navController = navController,
+        startDestination = SettingsRoutes.MENU,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
-        startDestination = SettingsRoutes.MENU)
-    {
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
+    ) {
         composable(SettingsRoutes.MENU) {
             SettingsMenuScreen(
                 onProfileClick = { navController.navigate(SettingsRoutes.PROFILE) },
@@ -109,15 +136,17 @@ fun SettingsScreen(
                 onSmartFeaturesClick = { navController.navigate(SettingsRoutes.SMART_FEATURES) },
                 onSoundClick = { navController.navigate(SettingsRoutes.SOUND) },
                 onRemindersClick = { navController.navigate(SettingsRoutes.REMINDERS) },
-                onDisplayClick = { navController.navigate(SettingsRoutes.DISPLAY) }
+                onDisplayClick = { navController.navigate(SettingsRoutes.DISPLAY) },
             )
         }
-        composable(SettingsRoutes.PROFILE) { ProfileSettingsPage(onNavigateBack = { navController.popBackStack() }) }
-        composable(SettingsRoutes.UNITS) { UnitsSettingsPage(onNavigateBack = { navController.popBackStack() }) }
-        composable(SettingsRoutes.SMART_FEATURES) { SmartFeaturesSettingsPage(onNavigateBack = { navController.popBackStack() }) }
-        composable(SettingsRoutes.SOUND) { SoundSettingsPage(onNavigateBack = { navController.popBackStack() }) }
-        composable(SettingsRoutes.REMINDERS) { RemindersSettingsPage(onNavigateBack = { navController.popBackStack() }) }
-        composable(SettingsRoutes.DISPLAY) { DisplaySettingsPage(onNavigateBack = { navController.popBackStack() }) }
+        // Pass the shared ViewModel to each sub-page that needs it
+        composable(SettingsRoutes.PROFILE) { ProfileSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.UNITS) { UnitsSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.SMART_FEATURES) { SmartFeaturesSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.SOUND) { SoundSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.REMINDERS) { RemindersSettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+        composable(SettingsRoutes.DISPLAY) { DisplaySettingsPage(viewModel = viewModel, onNavigateBack = { navController.popBackStack() }) }
+
     }
 }
 
@@ -128,7 +157,7 @@ private fun SettingsMenuScreen(
     onSmartFeaturesClick: () -> Unit,
     onSoundClick: () -> Unit,
     onRemindersClick: () -> Unit,
-    onDisplayClick: () -> Unit
+    onDisplayClick: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -139,36 +168,141 @@ private fun SettingsMenuScreen(
         ) {
             SettingsTopBar()
             Spacer(modifier = Modifier.height(14.dp))
-
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                SettingsItem(text = "My Profile", icon = Icons.Filled.Person, onClick = onProfileClick)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                val itemModifier = Modifier.padding(horizontal = 16.dp)
+                SettingsItem(text = "My Profile", icon = Icons.Default.Person, onClick = onProfileClick)
                 SettingsItem(text = "Unit of measurements", icon = Icons.Default.SquareFoot, onClick = onUnitsClick)
                 SettingsItem(text = "Smart Weight & Reps", icon = Icons.Default.Lightbulb, onClick = onSmartFeaturesClick)
-                SettingsItem(text = "Sound", icon = Icons.AutoMirrored.Filled.VolumeUp, onClick = onSoundClick)
+                SettingsItem(text = "Sound", icon = Icons.Default.VolumeUp, onClick = onSoundClick)
                 SettingsItem(text = "Reminders", icon = Icons.Default.Notifications, onClick = onRemindersClick)
-//                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Outlined.List, onClick = onDisplayClick)
+                SettingsItem(text = "Workout Tab Display", icon = Icons.AutoMirrored.Filled.List, onClick = onDisplayClick)
             }
         }
     }
 }
+private fun formatDate(millis: Long?): String {
+    if (millis == null) return ""
+    val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+    return formatter.format(Date(millis))
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
-    SettingsPageScaffold(title = "MY PROFILE", onNavigateBack = onNavigateBack) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+private fun ProfileSettingsPage(
+    viewModel: SettingsViewModel,
+    onNavigateBack: () -> Unit
+) {
+    val uiState by viewModel.uiState
+
+    var showGenderPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showWeightPicker by remember { mutableStateOf(false) }
+    var showHeightPicker by remember { mutableStateOf(false) }
+
+    val datePickerState = rememberDatePickerState()
+
+    if (showGenderPicker) {
+        GenderPickerDialog(
+            currentGender = uiState.gender,
+            onDismiss = { showGenderPicker = false },
+            onConfirm = { newGender ->
+                viewModel.updateGender(newGender)
+                showGenderPicker = false
+            }
+        )
+    }
+    if (showDatePicker) {
+        DatePickerDialog(
+            colors = DatePickerDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.updateAge(datePickerState.selectedDateMillis)
+                    showDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text("Cancel") } }
         ) {
+            // Create a custom color scheme just for the DatePicker
+            val datePickerColors = MaterialTheme.colorScheme.copy(
+                // This controls the "October 2025" text and arrows
+                onSurfaceVariant = MaterialTheme.colorScheme.onSurface
+            )
+
+            MaterialTheme(colorScheme = datePickerColors) {
+                DatePicker(
+                    state = datePickerState,
+                    colors = DatePickerDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        headlineContentColor = MaterialTheme.colorScheme.primary,
+
+                        // You might need to set this explicitly now if the above doesn't work alone
+                        subheadContentColor = MaterialTheme.colorScheme.onSurface,
+
+                        yearContentColor = MaterialTheme.colorScheme.onSurface,
+                        selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedYearContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+                        todayContentColor = MaterialTheme.colorScheme.primary,
+                        todayDateBorderColor = Color.Transparent
+                    ),
+                    title = {
+                        Text(
+                            "Select Birthdate",
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 12.dp)
+                        )
+                    },
+                    headline = {
+                        val selectedDateText = formatDate(datePickerState.selectedDateMillis)
+                        Text(
+                            text = selectedDateText,
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontSize = 36.sp
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 24.dp, end = 12.dp, bottom = 12.dp)
+                        )
+                    }
+                )
+            }
+        }
+    }
+    if (showWeightPicker) {
+        ValuePickerDialog(
+            title = "Enter Weight",
+            unit = "kg",
+            initialValue = uiState.weight,
+            onDismiss = { showWeightPicker = false },
+            onConfirm = { newWeight ->
+                viewModel.updateWeight(newWeight)
+                showWeightPicker = false
+            }
+        )
+    }
+    if (showHeightPicker) {
+        ValuePickerDialog(
+            title = "Enter Height",
+            unit = "cm",
+            initialValue = uiState.height,
+            onDismiss = { showHeightPicker = false },
+            onConfirm = { newHeight ->
+                viewModel.updateHeight(newHeight)
+                showHeightPicker = false
+            }
+        )
+    }
+
+    SettingsPageScaffold(title = "MY PROFILE", onNavigateBack = onNavigateBack) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
-            Spacer(modifier = Modifier.height(16.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Picture Placeholder
+                Spacer(modifier = Modifier.height(16.dp))
                 Box(
                     modifier = Modifier
                         .size(120.dp)
@@ -196,21 +330,22 @@ private fun ProfileSettingsPage(onNavigateBack: () -> Unit) {
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        ProfileDetailRow(label = "Gender", value = "Male")
-                        ProfileDetailRow(label = "Age", value = "30")
-                        ProfileDetailRow(label = "Weight", value = "75.0 kg")
-                        ProfileDetailRow(label = "Height", value = "175.0 cm")
+                        ProfileDetailRow(label = "Gender", value = uiState.gender, onClick = { showGenderPicker = true })
+                        ProfileDetailRow(label = "Age", value = uiState.age, onClick = { showDatePicker = true })
+                        ProfileDetailRow(label = "Weight", value = "${uiState.weight} kg", onClick = { showWeightPicker = true })
+                        ProfileDetailRow(label = "Height", value = "${uiState.height} cm", onClick = { showHeightPicker = true })
                     }
                 }
             }
         }
     }
 }
-
 @Composable
-private fun UnitsSettingsPage(onNavigateBack: () -> Unit) {
+private fun UnitsSettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+
     SettingsPageScaffold(title = "UNIT OF MEASUREMENTS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
@@ -222,9 +357,24 @@ private fun UnitsSettingsPage(onNavigateBack: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                RadioButtonSettingItem(label = "Weight Unit", options = listOf("kg", "lbs"))
-                RadioButtonSettingItem(label = "Muscle Unit", options = listOf("cm", "in"))
-                RadioButtonSettingItem(label = "Distance Unit", options = listOf("km", "miles"))
+                RadioButtonSettingItem(
+                    label = "Weight Unit",
+                    options = listOf("kg", "lbs"),
+                    selectedOption = uiState.weightUnit,
+                    onOptionSelected = { viewModel.updateWeightUnit(it) } // Pass the update function
+                )
+                RadioButtonSettingItem(
+                    label = "Muscle Unit",
+                    options = listOf("cm", "in"),
+                    selectedOption = uiState.muscleUnit,
+                    onOptionSelected = { viewModel.updateMuscleUnit(it) }
+                )
+                RadioButtonSettingItem(
+                    label = "Distance Unit",
+                    options = listOf("km", "miles"),
+                    selectedOption = uiState.distanceUnit,
+                    onOptionSelected = { viewModel.updateDistanceUnit(it) }
+                )
             }
 
         }
@@ -232,7 +382,9 @@ private fun UnitsSettingsPage(onNavigateBack: () -> Unit) {
 }
 
 @Composable
-private fun SmartFeaturesSettingsPage(onNavigateBack: () -> Unit) {
+private fun SmartFeaturesSettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+
     SettingsPageScaffold(title = "SMART WEIGHT & REPS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
@@ -245,14 +397,21 @@ private fun SmartFeaturesSettingsPage(onNavigateBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text("We'll adjust you weight and reps\n based on your progress", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.padding(bottom = 12.dp).align(Alignment.CenterHorizontally),textAlign = TextAlign.Center)
-                RadioButtonSettingItem(label = "Smart Weight & Reps", options = listOf("On", "Off"))
-                }
+                RadioButtonSettingItem(
+                    label = "Smart Weight & Reps",
+                    options = listOf("On", "Off"),
+                    selectedOption = uiState.smartFeatures,
+                    onOptionSelected = { viewModel.updateSmartFeatures(it) }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun SoundSettingsPage(onNavigateBack: () -> Unit) {
+private fun SoundSettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+
     SettingsPageScaffold(title = "SOUNDS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
@@ -267,20 +426,40 @@ private fun SoundSettingsPage(onNavigateBack: () -> Unit) {
                 RadioButtonSettingItem(
                     label = "Sound Before Step",
                     options = listOf("5 sec", "0 sec", "off"),
-                    initialSelection = 1
+                    selectedOption = uiState.soundBeforeStep,
+                    onOptionSelected = { viewModel.updateSoundBeforeStep(it) }
                 )
                 RadioButtonSettingItem(
                     label = "Vibration Before Step",
                     options = listOf("5 sec", "0 sec", "off"),
-                    initialSelection = 1
+                    selectedOption = uiState.vibrationBeforeStep,
+                    onOptionSelected = { viewModel.updateVibrationBeforeStep(it) }
                 )
             }
         }
     }
 }
 
+// <<< CHANGED: Refactored to use ViewModel
 @Composable
-private fun RemindersSettingsPage(onNavigateBack: () -> Unit) {
+private fun RemindersSettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+    var showTimePickerForDay by remember { mutableStateOf<String?>(null) }
+
+    // When a day is selected to edit time, this will trigger the dialog
+    showTimePickerForDay?.let { day ->
+        val initialTime = uiState.reminders.first { it.day == day }.time
+        TimePickerDialog(
+            initialTime = initialTime,
+            onDismiss = { showTimePickerForDay = null },
+            onConfirm = { newHour, newMinute ->
+                val newTime24 = String.format("%02d:%02d", newHour, newMinute)
+                viewModel.updateReminderTime(day, newTime24)
+                showTimePickerForDay = null
+            }
+        )
+    }
+
     SettingsPageScaffold(title = "WORKOUT REMINDERS", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
@@ -293,12 +472,18 @@ private fun RemindersSettingsPage(onNavigateBack: () -> Unit) {
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column {
-                    val days = listOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-                    days.forEachIndexed { index, day ->
+                    // Iterate over the list of reminders from the UiState
+                    uiState.reminders.forEach { reminder ->
                         ReminderItem(
-                            day = day,
-                            initialTime = "09:00",
-                            isEnabled = false
+                            day = reminder.day,
+                            time = reminder.time, // Pass time from state
+                            isEnabled = reminder.isEnabled, // Pass enabled from state
+                            onEnabledChange = { isEnabled ->
+                                viewModel.updateReminderEnabled(reminder.day, isEnabled)
+                            },
+                            onTimeClick = {
+                                showTimePickerForDay = reminder.day
+                            }
                         )
                     }
                 }
@@ -310,26 +495,11 @@ private fun RemindersSettingsPage(onNavigateBack: () -> Unit) {
 @Composable
 private fun ReminderItem(
     day: String,
-    initialTime: String,
-    isEnabled: Boolean
+    time: String, // Expects 24-hour "HH:mm" format
+    isEnabled: Boolean,
+    onEnabledChange: (Boolean) -> Unit,
+    onTimeClick: () -> Unit
 ) {
-    var checked by remember { mutableStateOf(isEnabled) }
-    var showTimePicker by remember { mutableStateOf(false) }
-    // Keep the internal state in 24-hour format for consistency
-    var selectedTime24 by remember { mutableStateOf(initialTime) }
-
-    if (showTimePicker) {
-        TimePickerDialog(
-            initialTime = selectedTime24,
-            onDismiss = { showTimePicker = false },
-            onConfirm = { newHour, newMinute ->
-                // The dialog confirms with 24-hour time
-                selectedTime24 = String.format("%02d:%02d", newHour, newMinute)
-                showTimePicker = false
-            }
-        )
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -337,8 +507,8 @@ private fun ReminderItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Switch(
-            checked = checked,
-            onCheckedChange = { checked = it },
+            checked = isEnabled,
+            onCheckedChange = onEnabledChange, // Use the callback
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.surface,
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
@@ -359,13 +529,14 @@ private fun ReminderItem(
         Surface(
             shape = CircleShape,
             color = MaterialTheme.colorScheme.background,
-            onClick = { showTimePicker = true },
+            onClick = onTimeClick, // Use the callback
         ) {
             Text(
-                text = formatTime(selectedTime24),
+                // Format the 24-hour time from state into 12-hour AM/PM for display
+                text = formatTime(time),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimary.copy(
-                    alpha = if (checked) 1f else 0.5f
+                    alpha = if (isEnabled) 1f else 0.5f
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
@@ -519,28 +690,83 @@ private fun ScrollablePicker(
 
 
 @Composable
-private fun DisplaySettingsPage(onNavigateBack: () -> Unit) {
+private fun DisplaySettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> Unit) {
+    val uiState by viewModel.uiState
+
     SettingsPageScaffold(title = "WORKOUT TAB DISPLAY", onNavigateBack = onNavigateBack) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            HorizontalDivider(thickness= 1.dp, color = MaterialTheme.colorScheme.outline)
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButtonSettingItem(label = "Default View", options = listOf("List", "Grid"))
+                DisplayOptionItem(
+                    label = "Expanded",
+                    isSelected = uiState.workoutDisplayMode == "Expanded",
+                    onClick = { viewModel.updateWorkoutDisplayMode("Expanded") },
+                    drawableResId = R.drawable.expanded_setting_preview
+                )
+
+                DisplayOptionItem(
+                    label = "Compact",
+                    isSelected = uiState.workoutDisplayMode == "Compact",
+                    onClick = { viewModel.updateWorkoutDisplayMode("Compact") },
+                    drawableResId = R.drawable.compact_setting_preview
+                )
             }
         }
     }
 }
 
 @Composable
-private fun RadioButtonSettingItem(label: String, options: List<String>, initialSelection: Int = 0) {
-    var selectedOption by remember { mutableStateOf(options[initialSelection]) }
+private fun DisplayOptionItem(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    drawableResId: Int
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.clickable(
+            role = Role.RadioButton,
+            onClick = onClick
+        )
+    ) {
+        Image(
+            painter = painterResource(id = drawableResId),
+            contentDescription = label,
+            modifier = Modifier
+                .width(120.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        RadioButton(
+            selected = isSelected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = MaterialTheme.colorScheme.primary,
+                unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
+    }
+}
 
+@Composable
+private fun RadioButtonSettingItem(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -557,18 +783,16 @@ private fun RadioButtonSettingItem(label: String, options: List<String>, initial
                 options.forEach { optionText ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        // Make the whole column clickable to select the radio button
                         modifier = Modifier.selectable(
                             selected = (optionText == selectedOption),
-                            onClick = { selectedOption = optionText },
+                            onClick = { onOptionSelected(optionText) }, // Use the callback
                             role = Role.RadioButton
                         )
                     ) {
                         RadioButton(
                             selected = (optionText == selectedOption),
-                            onClick = null, // onClick is handled by the parent modifier
+                            onClick = null,
                             colors = RadioButtonDefaults.colors(
-                                // This makes the selected radio button use your primary (orange) color
                                 selectedColor = MaterialTheme.colorScheme.primary,
                                 unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -581,67 +805,29 @@ private fun RadioButtonSettingItem(label: String, options: List<String>, initial
     }
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun ChoiceSettingItem(label: String, options: List<String>, initialSelection: Int = 0) {
-//    var selectedIndex by remember { mutableStateOf(initialSelection) }
-//
-//    Card(
-//        modifier = Modifier.fillMaxWidth(),
-//        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-//    ) {
-//        Row(
-//            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            Text(text = label, modifier = Modifier.weight(1f))
-//            SingleChoiceSegmentedButtonRow {
-//                options.forEachIndexed { index, optionLabel ->
-//                    SegmentedButton(
-//                        shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-//                        onClick = { selectedIndex = index },
-//                        selected = index == selectedIndex
-//                    ) {
-//                        Text(optionLabel)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsPageScaffold(
-    title: String,
-    onNavigateBack: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit
-) {
+private fun SettingsPageScaffold(title: String, onNavigateBack: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
     Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text(text = title, color = MaterialTheme.colorScheme.onPrimary) },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    windowInsets = TopAppBarDefaults.windowInsets
-                        .exclude(WindowInsets.statusBars)
-                        .add(WindowInsets(top = 3.dp))
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = title, color = MaterialTheme.colorScheme.onPrimary) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).add(WindowInsets(top = 3.dp)),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
-            },
+            )
+        },
         content = content
     )
 }
+
 
 @Composable
 fun SettingsTopBar() {
@@ -663,6 +849,7 @@ fun SettingsTopBar() {
 
     }
 }
+
 
 
 @Composable
@@ -692,25 +879,104 @@ private fun SettingsItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun ProfileDetailRow(label: String, value: String) {
+private fun ProfileDetailRow(label: String, value: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.background,
+            onClick = onClick,
+            modifier = Modifier.width(145.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun GenderPickerDialog(currentGender: String, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+    var selectedGender by remember { mutableStateOf(currentGender) }
+    val genders = listOf("Male", "Female")
+
+    AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = onDismiss,
+        title = { Text("Select Gender",
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(bottom = 12.dp)) },
+        text = {
+            Column {
+                genders.forEach { gender ->
+                    Row(
+                        Modifier.fillMaxWidth().selectable(
+                            selected = (gender == selectedGender),
+                            onClick = { selectedGender = gender },
+                            role = Role.RadioButton
+                        ).padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = (gender == selectedGender), onClick = null)
+                        Text(text = gender, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = { onConfirm(selectedGender) }) { Text("OK") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+    )
+}
+
+@Composable
+private fun ValuePickerDialog(
+    title: String,
+    unit: String,
+    initialValue: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var text by remember { mutableStateOf(initialValue) }
+
+    AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = onDismiss,
+        title = { Text(title, style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = MaterialTheme.colorScheme.onPrimary) },
+        text = {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it.filter { char -> char.isDigit() || char == '.' } },
+                label = { Text("Value", color = MaterialTheme.colorScheme.onSurface) },
+                suffix = { Text(unit, color = MaterialTheme.colorScheme.onSurface) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground
+                )
+            )
+        },
+        confirmButton = { TextButton(onClick = { onConfirm(text) }) { Text("OK") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SettingsScreenPreview() {
     VitaHabitTheme {
-        // Previewing the main menu is the most straightforward
         SettingsMenuScreen({}, {}, {}, {}, {}, {})
     }
 }

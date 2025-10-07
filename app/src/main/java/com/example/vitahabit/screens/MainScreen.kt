@@ -4,11 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
-import androidx.compose.material.icons.outlined.FitnessCenter
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -19,9 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.material.icons.outlined.LibraryBooks
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -33,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vitahabit.AppRoutes
 import com.example.vitahabit.R
 import com.example.vitahabit.screens.progress.ProgressScreen
+import com.example.vitahabit.screens.settings.SettingsScreen
 import com.example.vitahabit.ui.theme.VitaHabitTheme
 
 @Composable
@@ -103,7 +97,7 @@ fun MainScreen(
                 ProgressScreen(onNavigateToAchievements = onNavigateToAchievements)
             }
             composable(AppRoutes.SETTINGS) {
-                SettingsScreen(onProfileClick = {}, onNotificationsClick = {})
+                SettingsScreen()
             }
         }
     }
