@@ -24,6 +24,7 @@ import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.vitahabit.R
@@ -65,6 +66,22 @@ fun StartLoginScreen(onLoginClick: () -> Unit) {
                 contentDescription = "Line under quote",
                 modifier = Modifier.align(Alignment.Center).padding(bottom = 120.dp, top = 570.dp).size(width = 300.dp, height = 50.dp)
             )
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 220.dp), // Adjust padding as needed
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Build Strength, Build",
+                    color = Color.White,
+                    fontFamily = Inter,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+                Text(text = "Habits, Build You", color = Color.White, fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Center)
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()

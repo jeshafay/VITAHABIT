@@ -79,7 +79,7 @@ fun WallpaperWithButton(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 32.dp, end = 30.dp),
+                .padding(bottom = 5.dp, end = 30.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
             Box(
