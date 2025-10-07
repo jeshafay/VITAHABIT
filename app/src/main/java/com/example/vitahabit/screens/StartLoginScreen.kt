@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -60,11 +62,7 @@ fun StartLoginScreen(onLoginClick: () -> Unit) {
                 ), color = Color.White,
                 modifier = Modifier.align(Alignment.Center).padding(bottom = 280.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.line_under_quote),
-                contentDescription = "Line under quote",
-                modifier = Modifier.align(Alignment.Center).padding(bottom = 120.dp, top = 570.dp).size(width = 300.dp, height = 50.dp)
-            )
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -72,6 +70,13 @@ fun StartLoginScreen(onLoginClick: () -> Unit) {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.line_under_quote),
+                    contentDescription = "Linete under quote",
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(50.dp)
+                )
                 Button(
                     onClick = onLoginClick,
                     modifier = Modifier
