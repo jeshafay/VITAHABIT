@@ -197,7 +197,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             }
             Button(
                 onClick = {
-                    if (username == "hidupjokowi" && password == "123") {
+                    if (username == "123" && password == "123") {
                         onLoginClick()
                     } else {
                         showError = true
