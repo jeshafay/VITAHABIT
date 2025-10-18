@@ -1,6 +1,4 @@
-// in ExerciseListScreen.kt
 package com.example.vitahabit.ui.screens.exerciselist
-
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -32,6 +30,7 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
     ) {
         Column {
 
+            // Tombol close
             TextButton(
                 onClick = onCloseClick,
                 modifier = Modifier.padding(top = 32.dp, start = 16.dp),
@@ -41,16 +40,11 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
             ) {
                 Text("Close")
             }
-//            Text(
-//                text = "Close",
-//                style = MaterialTheme.typography.bodyLarge,
-//                modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)
-//            )
 
             Divider(
                 color = MaterialTheme.colorScheme.outline,
                 thickness = 2.dp,
-                modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp)
+                modifier = Modifier.padding(vertical = 2.dp)
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -68,8 +62,9 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, bottom = 12.dp)
             )
 
+            // Item pertama
             if (firstExercise != null) {
-                Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp)) {
+                Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                     ExerciseItem(exercise = firstExercise)
                 }
             }
@@ -77,9 +72,10 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
             Text(
                 text = "Next Exercise",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 8.dp, start = 14.dp)
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp)
             )
 
+            // Sisa item
             ExerciseList(exercises = remainingExercises)
         }
     }
@@ -88,7 +84,7 @@ fun ExerciseListScreen(onCloseClick: () -> Unit) {
 @Composable
 fun ExerciseList(exercises: List<Exercise>, modifier: Modifier = Modifier) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -102,7 +98,6 @@ fun ExerciseList(exercises: List<Exercise>, modifier: Modifier = Modifier) {
 fun ExerciseItem(exercise: Exercise, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        // Use the theme's surface color for cards
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
         ),
@@ -113,23 +108,26 @@ fun ExerciseItem(exercise: Exercise, modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(exercise.imageId),
-                contentDescription = stringResource(exercise.nameId),
+                painter = painterResource(id = exercise.imageId),
+                contentDescription = stringResource(id = exercise.nameId),
                 modifier = Modifier
                     .size(64.dp)
                     .clip(MaterialTheme.shapes.small),
                 contentScale = ContentScale.Crop
             )
 
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(1f)
+            ) {
                 Text(
-                    text = stringResource(exercise.nameId),
-
+                    text = stringResource(id = exercise.nameId),
                     color = MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = stringResource(exercise.descriptionId),
+                    text = stringResource(id = exercise.descriptionId),
                     color = MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.bodyMedium
                 )

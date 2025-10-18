@@ -1,49 +1,36 @@
-package com.example.vitahabit.ui.screens.exerciselist
+package com.example.vitahabit.model.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.vitahabit.R
 import com.example.vitahabit.model.Exercise
 import com.example.vitahabit.model.ExercisesRepository
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseListScreen(onCloseClick: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Exercise List") },
-                navigationIcon = {
-                    IconButton(onClick = onCloseClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_back),
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        ExerciseListContent(modifier = Modifier.padding(padding))
-    }
-}
-
-@Composable
-fun ExerciseListContent(modifier: Modifier = Modifier) {
+fun ExerciseListScreen() {
     val exercises = ExercisesRepository.exercises
 
     LazyColumn(
-        modifier = modifier
+        modifier = Modifier.Companion
             .fillMaxSize()
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -58,28 +45,23 @@ fun ExerciseListContent(modifier: Modifier = Modifier) {
 fun ExerciseCard(exercise: Exercise, index: Int) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.Companion.padding(12.dp)) {
             Image(
                 painter = painterResource(id = exercise.imageId),
                 contentDescription = stringResource(id = exercise.nameId),
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .size(64.dp)
                     .padding(end = 12.dp)
             )
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.Companion.weight(1f)) {
                 Text(
                     text = "${stringResource(id = exercise.nameId)} #${index + 1}",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Companion.Bold)
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.Companion.height(4.dp))
                 Text(
                     text = stringResource(id = exercise.descriptionId),
                     style = MaterialTheme.typography.bodyMedium

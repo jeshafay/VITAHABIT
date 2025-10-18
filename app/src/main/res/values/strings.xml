@@ -1,5 +1,27 @@
 <resources>
     <string name="app_name">VITAHABIT</string>
+
+    <!-- 🔹 Exercise 1 -->
     <string name="exercise1">Overhead Tricep Extensions</string>
     <string name="exercise_description1">3 sets x 10-12 reps x 20 kg</string>
+
+    <!-- 🔹 Exercise 2 -->
+    <string name="exercise2">Push Ups</string>
+    <string name="exercise_description2">3 sets x 15 reps (bodyweight)</string>
+
+    <!-- 🔹 Exercise 3 -->
+    <string name="exercise3">Bicep Curls</string>
+    <string name="exercise_description3">3 sets x 10 reps x 10 kg</string>
+
+    <!-- 🔹 Exercise 4 -->
+    <string name="exercise4">Squats</string>
+    <string name="exercise_description4">4 sets x 12 reps (bodyweight or weights)</string>
+
+    <!-- 🔹 Exercise 5 -->
+    <string name="exercise5">Plank</string>
+    <string name="exercise_description5">Hold for 60 seconds × 3 rounds</string>
+
+    <!-- 🔹 Exercise 6 -->
+    <string name="exercise6">Lateral Raises</string>
+    <string name="exercise_description6">3 sets x 12 reps x 8 kg</string>
 </resources>
